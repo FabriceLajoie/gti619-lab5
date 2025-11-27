@@ -59,5 +59,8 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $util2->roles()->syncWithoutDetaching([$businessRole->id]);
+
+        // Seed clients
+        $this->call(ClientSeeder::class);
     }
 }

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="emVIdlMBLx5eQ9zBIFqc5kAAcDBma0l9RmfIt9K8">
+    <title>Connexion</title>
+    <!-- Styles -->
+    <link href="/css/app.css" rel="stylesheet">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://localhost">GTI619 LAB5</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                                            <li class="nav-item"><a class="nav-link" href="http://localhost/login">Connexion</a></li>
+                                    </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="container">
+      <div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Connexion</div>
+            <div class="card-body">
+                <form method="POST" action="http://localhost/login">
+                    <input type="hidden" name="_token" value="emVIdlMBLx5eQ9zBIFqc5kAAcDBma0l9RmfIt9K8">                    <div class="form-group mb-3">
+                        <label for="email">Adresse courriel</label>
+                        <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="password">Mot de passe</label>
+                        <input id="password" type="password" class="form-control" name="password" required>
+                    </div>
+
+                    <div class="form-group form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember" >
+                        <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                    </div>
+
+                    <div class="form-group mb-0">
+                        <button type="submit" class="btn btn-primary">Se connecter</button>
+                        <a href="http://localhost" class="btn btn-link">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+    <!-- Scripts -->
+    <script src="/js/app.js" defer></script>
+    </html>
+</html>
