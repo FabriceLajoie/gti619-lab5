@@ -16,9 +16,12 @@ use App\Http\Controllers\DashboardController;
 */
 
 // Authentication routes
-Route::get('/', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/', function() {
+    return view('welcome');
+});
+// Route::get('/', [AuthController::class, 'showLogin']);
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Dashboard routes
 Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
@@ -28,6 +31,6 @@ Route::get('/clients/business', [DashboardController::class, 'showBusinessClient
 
 // Client resource routes
 Route::resource('client', ClientController::class);
-Route::get('client/{id}/edit', 'ClientController@edit')->name('client.edit');
-Route::put('client/{id}', 'ClientController@update')->name('client.update');
-Route::delete('client/{id}', 'ClientController@destroy')->name('client.destroy');
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

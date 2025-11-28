@@ -1,3 +1,5 @@
+
+<!-- On n'utilise plus ici -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,7 +107,8 @@
             </div>
         @endif
 
-        <form action="{{ route('login.submit') }}" method="POST">
+        <form action="{{ url('/login') }}" method="POST">
+    <!-- CSRF pour empêcher le cross site request forgeries-->
             @csrf
             
             <div class="form-group">
