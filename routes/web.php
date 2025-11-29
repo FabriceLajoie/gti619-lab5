@@ -20,8 +20,12 @@ Route::get('/', function() {
     return view('welcome');
 });
 // Route::get('/', [AuthController::class, 'showLogin']);
-// Route::post('/login', [AuthController::class, 'login']);
-// Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::get('/password/change', [App\Http\Controllers\PasswordController::class, 'showChangeForm'])
+    ->middleware('auth')->name('password.change');
+
+Route::post('/password/change', [App\Http\Controllers\PasswordController::class, 'change'])
+    ->middleware('auth')->name('password.change.post');
 
 // Dashboard routes
 Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
