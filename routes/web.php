@@ -27,14 +27,13 @@ Route::get('/password/change', [App\Http\Controllers\PasswordController::class, 
 Route::post('/password/change', [App\Http\Controllers\PasswordController::class, 'change'])
     ->middleware('auth')->name('password.change.post');
 
-// Dashboard routes
-Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
-Route::get('/settings', [DashboardController::class, 'showSettings'])->name('settings');
-Route::get('/clients/residential', [DashboardController::class, 'showResidentialClients'])->name('clients.residential');
-Route::get('/clients/business', [DashboardController::class, 'showBusinessClients'])->name('clients.business');
-
-// Client resource routes
-Route::resource('client', ClientController::class);
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/settings', [DashboardController::class, 'showSettings'])->name('settings');
+    Route::get('/clients/residential', [DashboardController::class, 'showResidentialClients'])->name('clients.residential');
+    Route::get('/clients/business', [DashboardController::class, 'showBusinessClients'])->name('clients.business');
+    Route::resource('client', ClientController::class);
+});
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

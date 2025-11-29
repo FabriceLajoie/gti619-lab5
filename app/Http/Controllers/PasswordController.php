@@ -1,9 +1,8 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 class PasswordController extends Controller
 {
@@ -21,11 +20,11 @@ class PasswordController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        if (! Hash::check($request->input('current_password'), $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
         }
 
-        $user->password = Hash::make($request->input('password'));
+        $user->password = Hash::make($request->password);
         $user->password_changed_at = now();
         $user->save();
 
