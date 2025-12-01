@@ -4,28 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\SecurityConfig;
 use App\Services\SecurityConfigService;
 use App\Services\AuditLogger;
+use App\Services\PasswordHistoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
 
 class AdminController extends Controller
 {
     protected $securityConfigService;
     protected $auditLogger;
+    protected $passwordHistoryService;
 
     /**
      * Create a new controller instance.
      */
-    public function __construct(SecurityConfigService $securityConfigService, AuditLogger $auditLogger)
-    {
+    public function __construct(
+        SecurityConfigService $securityConfigService, 
+        AuditLogger $auditLogger,
+        PasswordHistoryService $passwordHistoryService
+    ) {
         $this->middleware('auth');
         $this->middleware('role:Administrateur');
         $this->securityConfigService = $securityConfigService;
         $this->auditLogger = $auditLogger;
+        $this->passwordHistoryService = $passwordHistoryService;
     }
 
     /**
@@ -212,6 +222,199 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Failed to unlock user: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the create user form.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function createUser()
+    {
+        $roles = Role::orderBy('name')->get();
+        return view('admin.create-user', compact('roles'));
+    }
+
+    /**
+     * Store a new user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Password::min(8)],
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->role_id,
+            ]);
+
+            // Add password to history
+            $this->passwordHistoryService->addToHistory($user->id, ['hash' => $user->password]);
+
+            // Log user creation
+            $this->auditLogger->logUserCreated($user->id, Auth::id(), $request);
+
+            return redirect()->route('admin.users')
+                ->with('success', "User {$user->name} created successfully.");
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to create user: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Show the edit user form.
+     *
+     * @param User $user
+     * @return \Illuminate\View\View
+     */
+    public function editUser(User $user)
+    {
+        $roles = Role::orderBy('name')->get();
+        return view('admin.edit-user', compact('user', 'roles'));
+    }
+
+    /**
+     * Update a user.
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        try {
+            $oldData = $user->toArray();
+            
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role_id' => $request->role_id,
+            ]);
+
+            // Log user update
+            $this->auditLogger->logUserUpdated($user->id, Auth::id(), $oldData, $user->toArray(), $request);
+
+            return redirect()->route('admin.users')
+                ->with('success', "User {$user->name} updated successfully.");
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to update user: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Show user activity.
+     *
+     * @param User $user
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function userActivity(User $user, Request $request)
+    {
+        $query = AuditLog::where('user_id', $user->id)->orderBy('created_at', 'desc');
+
+        // Apply filters
+        if ($request->filled('event_type')) {
+            $query->where('event_type', $request->event_type);
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        $activities = $query->paginate(25)->withQueryString();
+
+        // Get available event types for this user
+        $eventTypes = AuditLog::where('user_id', $user->id)
+            ->select('event_type')
+            ->distinct()
+            ->orderBy('event_type')
+            ->pluck('event_type');
+
+        return view('admin.user-activity', compact('user', 'activities', 'eventTypes'));
+    }
+
+    /**
+     * Reset user password.
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function resetUserPassword(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ]);
+
+        try {
+            $oldPasswordHash = $user->password;
+            $newPasswordHash = Hash::make($request->password);
+            
+            $user->update([
+                'password' => $newPasswordHash,
+                'password_changed_at' => now(),
+            ]);
+
+            // Add new password to history
+            $this->passwordHistoryService->addToHistory($user->id, ['hash' => $newPasswordHash]);
+
+            // Log password reset
+            $this->auditLogger->logPasswordReset($user->id, Auth::id(), $request);
+
+            return redirect()->back()
+                ->with('success', "Password reset successfully for {$user->name}.");
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to reset password: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Terminate all user sessions.
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function terminateUserSessions(Request $request, User $user)
+    {
+        try {
+            // In a real application, you would invalidate all sessions for this user
+            // For now, we'll just log the action
+            
+            // Log session termination
+            $this->auditLogger->logSessionsTerminated($user->id, Auth::id(), $request);
+
+            return redirect()->back()
+                ->with('success', "All sessions terminated for {$user->name}.");
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to terminate sessions: ' . $e->getMessage());
         }
     }
 

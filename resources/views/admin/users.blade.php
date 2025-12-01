@@ -9,32 +9,35 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0">Gestion des utilisateurs</h1>
                 <div>
-                    <a href="{{ route('admin.security-config') }}" class="btn btn-outline-primary me-2">
-                        <i class="fas fa-shield-alt"></i> Configuration de sécurité
+                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary me-2">
+                        Créer un utilisateur
                     </a>
-                    <a href="{{ route('admin.audit-logs') }}" class="btn btn-outline-info">
-                        <i class="fas fa-list"></i> Journaux d'audit
+                    <a href="{{ route('admin.security-config') }}" class="btn btn-secondary me-2">
+                        Configuration de sécurité
+                    </a>
+                    <a href="{{ route('admin.audit-logs') }}" class="btn btn-secondary">
+                        Journaux d'audit
                     </a>
                 </div>
             </div>
 
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                    {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
             @if(session('warning'))
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>{{ session('warning') }}
+                    {{ session('warning') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                    {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
@@ -69,10 +72,10 @@
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2">
-                                <i class="fas fa-search"></i> Filtrer
+                                Filtrer
                             </button>
-                            <a href="{{ route('admin.users') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i> Effacer
+                            <a href="{{ route('admin.users') }}" class="btn btn-secondary">
+                                Effacer
                             </a>
                         </div>
                     </form>
@@ -83,7 +86,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-users me-2"></i>Utilisateurs ({{ $users->total() }})
+                        Utilisateurs ({{ $users->total() }})
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -110,28 +113,20 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge bg-info">{{ $user->role->name ?? 'Aucun rôle' }}</span>
+                                                {{ $user->role->name ?? 'Aucun rôle' }}
                                             </td>
                                             <td>
                                                 @if($user->isLocked())
-                                                    <span class="badge bg-danger">
-                                                        Verrouillé
-                                                    </span>
+                                                    Verrouillé
                                                     <div class="text-muted small">
                                                         Jusqu'à : {{ $user->locked_until->format('j M Y H:i') }}
                                                     </div>
                                                 @else
-                                                    <span class="badge bg-success">
-                                                        Actif
-                                                    </span>
+                                                    Actif
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($user->failed_login_attempts > 0)
-                                                    <span class="badge bg-warning">{{ $user->failed_login_attempts }}</span>
-                                                @else
-                                                    <span class="text-muted">0</span>
-                                                @endif
+                                                {{ $user->failed_login_attempts }}
                                             </td>
                                             <td>
                                                 @php
@@ -150,16 +145,22 @@
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <a href="{{ route('admin.users.details', $user) }}" 
-                                                       class="btn btn-sm btn-outline-primary" 
-                                                       data-bs-toggle="tooltip" title="Voir les détails">
+                                                       class="btn btn-sm btn-secondary">
                                                         Détails
+                                                    </a>
+                                                    <a href="{{ route('admin.users.edit', $user) }}" 
+                                                       class="btn btn-sm btn-secondary">
+                                                        Modifier
+                                                    </a>
+                                                    <a href="{{ route('admin.users.activity', $user) }}" 
+                                                       class="btn btn-sm btn-secondary">
+                                                        Activité
                                                     </a>
                                                     @if($user->isLocked())
                                                         <button type="button" 
-                                                                class="btn btn-sm btn-outline-success" 
+                                                                class="btn btn-sm btn-primary" 
                                                                 data-bs-toggle="modal" 
-                                                                data-bs-target="#unlockModal{{ $user->id }}"
-                                                                title="Déverrouiller le compte">
+                                                                data-bs-target="#unlockModal{{ $user->id }}">
                                                             Déverrouiller
                                                         </button>
                                                     @endif
@@ -190,8 +191,8 @@
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                                                             <form method="POST" action="{{ route('admin.users.unlock', $user) }}" class="d-inline">
                                                                 @csrf
-                                                                <button type="submit" class="btn btn-success">
-                                                                    <i class="fas fa-unlock me-2"></i>Déverrouiller le compte
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    Déverrouiller le compte
                                                                 </button>
                                                             </form>
                                                         </div>
@@ -212,7 +213,6 @@
                         @endif
                     @else
                         <div class="text-center py-5">
-                            <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
                             <h5 class="mt-3 text-muted">Aucun utilisateur trouvé</h5>
                             <p class="text-muted">Essayez d'ajuster vos critères de recherche.</p>
                         </div>

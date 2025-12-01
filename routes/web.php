@@ -42,8 +42,15 @@ Route::middleware(['auth'])->group(function () {
         
         // User management routes
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
-        Route::post('/admin/users/{user}/unlock', [AdminController::class, 'unlockUser'])->name('admin.users.unlock');
+        Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+        Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
         Route::get('/admin/users/{user}', [AdminController::class, 'userDetails'])->name('admin.users.details');
+        Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+        Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+        Route::get('/admin/users/{user}/activity', [AdminController::class, 'userActivity'])->name('admin.users.activity');
+        Route::post('/admin/users/{user}/unlock', [AdminController::class, 'unlockUser'])->name('admin.users.unlock');
+        Route::post('/admin/users/{user}/reset-password', [AdminController::class, 'resetUserPassword'])->name('admin.users.reset-password');
+        Route::post('/admin/users/{user}/terminate-sessions', [AdminController::class, 'terminateUserSessions'])->name('admin.users.terminate-sessions');
         
         // Audit logging routes
         Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.audit-logs');

@@ -3,8 +3,8 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Journaux d'audit</h1>
-        <p class="text-gray-600 mt-2">Surveiller les événements de sécurité et les activités du système</p>
+        <h1 class="text-3xl font-bold">Journaux d'audit</h1>
+        <p class="mt-2">Surveiller les événements de sécurité et les activités du système</p>
     </div>
 
     <!-- Filters -->

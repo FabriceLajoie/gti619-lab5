@@ -22,32 +22,32 @@
                                 class="btn btn-success me-2" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#unlockModal">
-                            <i class="fas fa-unlock me-2"></i>Déverrouiller le compte
+                            Déverrouiller le compte
                         </button>
                     @endif
-                    <a href="{{ route('admin.users') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Retour aux utilisateurs
+                    <a href="{{ route('admin.users') }}" class="btn btn-secondary">
+                        Retour aux utilisateurs
                     </a>
                 </div>
             </div>
 
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                    {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
             @if(session('warning'))
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>{{ session('warning') }}
+                    {{ session('warning') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                    {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
@@ -58,14 +58,11 @@
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-user me-2"></i>Informations utilisateur
+                                Informations utilisateur
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="text-center mb-4">
-                                <div class="avatar-lg bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
-                                    {{ strtoupper(substr($user->name, 0, 2)) }}
-                                </div>
+                            <div class="mb-4">
                                 <h5 class="mb-1">{{ $user->name }}</h5>
                                 <p class="text-muted mb-0">{{ $user->email }}</p>
                             </div>
@@ -83,7 +80,7 @@
                                     <div>
                                         @if($user->isLocked())
                                             <span class="badge bg-danger fs-6">
-                                                <i class="fas fa-lock me-1"></i>Verrouillé
+                                                Verrouillé
                                             </span>
                                             <div class="text-muted small mt-1">
                                                 Jusqu'à : {{ $user->locked_until->format('j M Y H:i') }}<br>
@@ -91,7 +88,7 @@
                                             </div>
                                         @else
                                             <span class="badge bg-success fs-6">
-                                                <i class="fas fa-unlock me-1"></i>Actif
+                                                Actif
                                             </span>
                                         @endif
                                     </div>
@@ -146,7 +143,7 @@
                     <div class="card mt-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-chart-bar me-2"></i>Statistiques
+                                Statistiques
                             </h5>
                         </div>
                         <div class="card-body">
@@ -198,7 +195,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-history me-2"></i>Activité récente
+                                Activité récente
                             </h5>
                         </div>
                         <div class="card-body p-0">
@@ -217,20 +214,8 @@
                                             @foreach($recentLogs as $log)
                                                 <tr>
                                                     <td>
-                                                        @php
-                                                            $eventConfig = [
-                                                                'login_success' => ['icon' => 'fas fa-sign-in-alt', 'class' => 'text-success', 'label' => 'Connexion réussie'],
-                                                                'login_failed' => ['icon' => 'fas fa-times-circle', 'class' => 'text-danger', 'label' => 'Connexion échouée'],
-                                                                'user_logout' => ['icon' => 'fas fa-sign-out-alt', 'class' => 'text-info', 'label' => 'Déconnexion'],
-                                                                'password_changed' => ['icon' => 'fas fa-key', 'class' => 'text-warning', 'label' => 'Mot de passe modifié'],
-                                                                'account_locked' => ['icon' => 'fas fa-lock', 'class' => 'text-danger', 'label' => 'Compte verrouillé'],
-                                                                'account_unlocked' => ['icon' => 'fas fa-unlock', 'class' => 'text-success', 'label' => 'Compte déverrouillé'],
-                                                            ];
-                                                            $config = $eventConfig[$log->event_type] ?? ['icon' => 'fas fa-info-circle', 'class' => 'text-muted', 'label' => ucfirst(str_replace('_', ' ', $log->event_type))];
-                                                        @endphp
                                                         <div class="d-flex align-items-center">
-                                                            <i class="{{ $config['icon'] }} {{ $config['class'] }} me-2"></i>
-                                                            <span>{{ $config['label'] }}</span>
+                                                            <span>{{ $log->formatted_event_type }}</span>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -260,7 +245,6 @@
                                 </div>
                             @else
                                 <div class="text-center py-5">
-                                    <i class="fas fa-history text-muted" style="font-size: 3rem;"></i>
                                     <h5 class="mt-3 text-muted">Aucune activité récente</h5>
                                     <p class="text-muted">Aucun journal d'audit trouvé pour cet utilisateur.</p>
                                 </div>
@@ -268,8 +252,8 @@
                         </div>
                         @if($recentLogs->count() > 0)
                             <div class="card-footer text-center">
-                                <a href="{{ route('admin.audit-logs', ['user_id' => $user->id]) }}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-list me-2"></i>Voir toute l'activité
+                                <a href="{{ route('admin.audit-logs', ['user_id' => $user->id]) }}" class="btn btn-secondary btn-sm">
+                                    Voir toute l'activité
                                 </a>
                             </div>
                         @endif
@@ -303,8 +287,8 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                     <form method="POST" action="{{ route('admin.users.unlock', $user) }}" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-unlock me-2"></i>Déverrouiller le compte
+                        <button type="submit" class="btn btn-primary">
+                            Déverrouiller le compte
                         </button>
                     </form>
                 </div>
@@ -314,13 +298,3 @@
 @endif
 @endsection
 
-@push('styles')
-<style>
-.avatar-lg {
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
-    font-weight: 600;
-}
-</style>
-@endpush
