@@ -96,6 +96,25 @@
             color: #666;
             font-size: 14px;
         }
+        
+        .audit-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #2196F3 !important;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .audit-link:hover {
+            background-color: #e9ecef;
+            border-color: #2196F3;
+        }
     </style>
 </head>
 <body>
@@ -111,6 +130,14 @@
     </div>
 
     <div class="container">
+        @if(auth()->user()->role->name === 'Administrateur')
+            <div style="margin-bottom: 20px;">
+                <a href="{{ route('admin.audit-logs') }}" class="audit-link">
+                    Consulter les journaux d'audit
+                </a>
+            </div>
+        @endif
+        
         <div class="settings-box">
             <div class="setting-item">
                 <h3>Profil</h3>
@@ -120,6 +147,7 @@
             <div class="setting-item">
                 <h3>Sécurité</h3>
                 <p>Modifiez votre mot de passe et gérez les paramètres de sécurité de votre compte.</p>
+
             </div>
             
             <div class="setting-item">

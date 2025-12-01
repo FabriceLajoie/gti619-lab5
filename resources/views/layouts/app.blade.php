@@ -33,7 +33,36 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            </li>
+                            
+                            @if(Auth::user() && Auth::user()->hasRole('Administrateur'))
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Admin
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                        <li><a class="dropdown-item" href="{{ route('settings') }}">Settings</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.audit-logs') }}">Audit Logs</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.audit-statistics') }}">Audit Statistics</a></li>
+                                    </ul>
+                                </li>
+                            @endif
+                            
+                            @if(Auth::user() && Auth::user()->hasAnyRole(['Administrateur', 'Préposé aux clients résidentiels']))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('clients.residential') }}">Residential Clients</a>
+                                </li>
+                            @endif
+                            
+                            @if(Auth::user() && Auth::user()->hasAnyRole(['Administrateur', 'Préposé aux clients d\'affaire']))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('clients.business') }}">Business Clients</a>
+                                </li>
+                            @endif
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->

@@ -9,11 +9,12 @@ use App\Services\AuditLogger;
 
 class RoleMiddleware
 {
-    protected $auditLogger;
-
-    public function __construct(AuditLogger $auditLogger)
+    /**
+     * Get the audit logger instance
+     */
+    protected function getAuditLogger()
     {
-        $this->auditLogger = $auditLogger;
+        return app(AuditLogger::class);
     }
 
     /**
@@ -40,11 +41,11 @@ class RoleMiddleware
 
         // Check if user has a role assigned
         if (!$user->role) {
-            $this->auditLogger->logSecurityEvent('unauthorized_access_no_role', $user->id, [
+            $this->getAuditLogger()->logSecurityEvent('unauthorized_access_no_role', $user->id, [
                 'route' => $request->route()->getName(),
                 'url' => $request->url(),
                 'required_roles' => $roles
-            ]);
+            ], $request);
             
             return redirect()->route('dashboard')->with('error', 'Access denied: No role assigned.');
         }
@@ -53,12 +54,12 @@ class RoleMiddleware
 
         // Check if user's role is in the allowed roles
         if (!in_array($userRole, $roles)) {
-            $this->auditLogger->logSecurityEvent('unauthorized_access_insufficient_role', $user->id, [
+            $this->getAuditLogger()->logSecurityEvent('unauthorized_access_insufficient_role', $user->id, [
                 'user_role' => $userRole,
                 'required_roles' => $roles,
                 'route' => $request->route()->getName(),
                 'url' => $request->url()
-            ]);
+            ], $request);
 
             // Redirect based on user's role to appropriate page
             $redirectRoute = $this->getRedirectRouteForRole($userRole);
@@ -66,11 +67,11 @@ class RoleMiddleware
         }
 
         // Log successful access
-        $this->auditLogger->logSecurityEvent('authorized_access', $user->id, [
+        $this->getAuditLogger()->logSecurityEvent('authorized_access', $user->id, [
             'user_role' => $userRole,
             'route' => $request->route()->getName(),
             'url' => $request->url()
-        ]);
+        ], $request);
 
         return $next($request);
     }

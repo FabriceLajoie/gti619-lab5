@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,12 @@ Route::middleware(['auth'])->group(function () {
     // Admin-only routes
     Route::middleware(['role:Administrateur'])->group(function () {
         Route::get('/settings', [DashboardController::class, 'showSettings'])->name('settings');
+        
+        // Audit logging routes
+        Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.audit-logs');
+        Route::get('/admin/audit-logs/{auditLog}', [AdminController::class, 'auditLogDetails'])->name('admin.audit-log-details');
+        Route::get('/admin/audit-logs-export', [AdminController::class, 'exportAuditLogs'])->name('admin.audit-logs.export');
+        Route::get('/admin/audit-statistics', [AdminController::class, 'auditStatistics'])->name('admin.audit-statistics');
     });
     
     // Residential clients - accessible by Administrateur and Préposé aux clients résidentiels
