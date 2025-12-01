@@ -4,12 +4,6 @@ namespace App\Services;
 
 use Exception;
 
-/**
- * PBKDF2 Password Hashing Service
- * 
- * Implements secure password hashing using PBKDF2 with SHA-256
- * Provides configurable iterations and secure salt generation
- */
 class PBKDF2PasswordHasher
 {
     /**

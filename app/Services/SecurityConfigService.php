@@ -33,8 +33,6 @@ class SecurityConfigService
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
-
-        // Additional business logic validation
         $this->validateBusinessRules($data);
 
         $config = SecurityConfig::getInstance();
@@ -44,7 +42,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get specific configuration value
+     * specific configuration value
      */
     public function get($key, $default = null)
     {
@@ -52,7 +50,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get maximum login attempts
+     * maximum login attempts
      */
     public function getMaxLoginAttempts()
     {
@@ -60,7 +58,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get lockout duration in minutes
+     * lockout duration in minutes
      */
     public function getLockoutDurationMinutes()
     {
@@ -68,7 +66,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get password minimum length
+     * password minimum length
      */
     public function getPasswordMinLength()
     {
@@ -76,7 +74,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get password requirements as array
+     * password requirements as array
      */
     public function getPasswordRequirements()
     {
@@ -90,7 +88,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get password history count
+     * password history count
      */
     public function getPasswordHistoryCount()
     {
@@ -98,7 +96,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get password expiry days
+     * password expiry days
      */
     public function getPasswordExpiryDays()
     {
@@ -106,7 +104,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get PBKDF2 iterations
+     * PBKDF2 iterations
      */
     public function getPbkdf2Iterations()
     {
@@ -114,7 +112,7 @@ class SecurityConfigService
     }
 
     /**
-     * Get session timeout in minutes
+     * session timeout in minutes
      */
     public function getSessionTimeoutMinutes()
     {
@@ -129,7 +127,7 @@ class SecurityConfigService
         $requirements = $this->getPasswordRequirements();
         $errors = [];
 
-        // Check minimum length
+        // Check min length
         if (strlen($password) < $requirements['min_length']) {
             $errors[] = "Password must be at least {$requirements['min_length']} characters long";
         }
@@ -149,7 +147,7 @@ class SecurityConfigService
             $errors[] = "Password must contain at least one number";
         }
 
-        // Check special characters requirement
+        // Check special characters
         if ($requirements['require_special'] && !preg_match('/[^A-Za-z0-9]/', $password)) {
             $errors[] = "Password must contain at least one special character";
         }
@@ -187,7 +185,7 @@ class SecurityConfigService
      */
     private function validateBusinessRules(array $data)
     {
-        // Ensure at least one password requirement is enabled
+        // at least one password requirement is enabled
         $passwordRequirements = [
             $data['password_require_uppercase'] ?? $this->get('password_require_uppercase'),
             $data['password_require_lowercase'] ?? $this->get('password_require_lowercase'),
@@ -201,7 +199,7 @@ class SecurityConfigService
             ]);
         }
 
-        // Validate PBKDF2 iterations for security vs performance balance
+        // Validate PBKDF2 iterations
         $iterations = $data['pbkdf2_iterations'] ?? $this->get('pbkdf2_iterations');
         if ($iterations < 50000) {
             throw ValidationException::withMessages([
