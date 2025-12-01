@@ -12,3 +12,7 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+.kiro/specs/gti619-lab5-security/design.md
+.kiro/specs/gti619-lab5-security/requirements.md
+.kiro/specs/gti619-lab5-security/tasks.md
+.gitignore

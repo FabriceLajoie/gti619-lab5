@@ -34,6 +34,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/clients/business', [DashboardController::class, 'showBusinessClients'])->name('clients.business');
     Route::resource('client', ClientController::class);
 });
-Auth::routes();
+// Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
