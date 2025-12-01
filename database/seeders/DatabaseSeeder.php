@@ -62,5 +62,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed clients
         $this->call(ClientSeeder::class);
+        
+        // Seed security configuration
+        $this->call(SecurityConfigSeeder::class);
     }
 }

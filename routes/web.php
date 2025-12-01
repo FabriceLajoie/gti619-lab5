@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,11 +17,10 @@ use App\Http\Controllers\DashboardController;
 */
 
 // Authentication routes
-Route::get('/', function() {
-    return view('welcome');
-});
-// Route::get('/', [AuthController::class, 'showLogin']);
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login.form');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/password/change', [App\Http\Controllers\PasswordController::class, 'showChangeForm'])
     ->middleware('auth')->name('password.change');
 

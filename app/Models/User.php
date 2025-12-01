@@ -20,7 +20,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'password_hash',
         'password_salt',
         'failed_login_attempts',
         'locked_until',
@@ -40,7 +39,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'password_hash',
         'password_salt',
         'remember_token',
     ];
