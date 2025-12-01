@@ -9,12 +9,11 @@ use App\Services\AuditLogger;
 
 class RoleMiddleware
 {
-    /**
-     * Get the audit logger instance
-     */
-    protected function getAuditLogger()
+    protected $auditLogger;
+
+    public function __construct(AuditLogger $auditLogger)
     {
-        return app(AuditLogger::class);
+        $this->auditLogger = $auditLogger;
     }
 
     /**
@@ -41,7 +40,7 @@ class RoleMiddleware
 
         // Check if user has a role assigned
         if (!$user->role) {
-            $this->getAuditLogger()->logSecurityEvent('unauthorized_access_no_role', $user->id, [
+            $this->auditLogger->logSecurityEvent('unauthorized_access_no_role', $user->id, [
                 'route' => $request->route()->getName(),
                 'url' => $request->url(),
                 'required_roles' => $roles
@@ -54,7 +53,7 @@ class RoleMiddleware
 
         // Check if user's role is in the allowed roles
         if (!in_array($userRole, $roles)) {
-            $this->getAuditLogger()->logSecurityEvent('unauthorized_access_insufficient_role', $user->id, [
+            $this->auditLogger->logSecurityEvent('unauthorized_access_insufficient_role', $user->id, [
                 'user_role' => $userRole,
                 'required_roles' => $roles,
                 'route' => $request->route()->getName(),
@@ -67,7 +66,7 @@ class RoleMiddleware
         }
 
         // Log successful access
-        $this->getAuditLogger()->logSecurityEvent('authorized_access', $user->id, [
+        $this->auditLogger->logSecurityEvent('authorized_access', $user->id, [
             'user_role' => $userRole,
             'route' => $request->route()->getName(),
             'url' => $request->url()

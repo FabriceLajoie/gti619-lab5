@@ -68,7 +68,7 @@ class RoleMiddlewareTest extends TestCase
         
         $this->auditLogger->shouldReceive('logSecurityEvent')
             ->once()
-            ->with('authorized_access', $user->id, Mockery::type('array'));
+            ->with('authorized_access', $user->id, Mockery::type('array'), Mockery::type('Illuminate\Http\Request'));
 
         $response = $this->middleware->handle($request, function () {
             return new Response('Success');
@@ -96,7 +96,7 @@ class RoleMiddlewareTest extends TestCase
         
         $this->auditLogger->shouldReceive('logSecurityEvent')
             ->once()
-            ->with('unauthorized_access_insufficient_role', $user->id, Mockery::type('array'));
+            ->with('unauthorized_access_insufficient_role', $user->id, Mockery::type('array'), Mockery::type('Illuminate\Http\Request'));
 
         $response = $this->middleware->handle($request, function () {
             return new Response('Success');
@@ -128,7 +128,7 @@ class RoleMiddlewareTest extends TestCase
         
         $this->auditLogger->shouldReceive('logSecurityEvent')
             ->once()
-            ->with('authorized_access', $user->id, Mockery::type('array'));
+            ->with('authorized_access', $user->id, Mockery::type('array'), Mockery::type('Illuminate\Http\Request'));
 
         $response = $this->middleware->handle($request, function () {
             return new Response('Success');
@@ -155,7 +155,7 @@ class RoleMiddlewareTest extends TestCase
         
         $this->auditLogger->shouldReceive('logSecurityEvent')
             ->once()
-            ->with('unauthorized_access_no_role', $user->id, Mockery::type('array'));
+            ->with('unauthorized_access_no_role', $user->id, Mockery::type('array'), Mockery::type('Illuminate\Http\Request'));
 
         $response = $this->middleware->handle($request, function () {
             return new Response('Success');
@@ -183,7 +183,7 @@ class RoleMiddlewareTest extends TestCase
         
         $this->auditLogger->shouldReceive('logSecurityEvent')
             ->once()
-            ->with('unauthorized_access_insufficient_role', $adminUser->id, Mockery::type('array'));
+            ->with('unauthorized_access_insufficient_role', $adminUser->id, Mockery::type('array'), Mockery::type('Illuminate\Http\Request'));
 
         $response = $this->middleware->handle($request, function () {
             return new Response('Success');
@@ -211,7 +211,7 @@ class RoleMiddlewareTest extends TestCase
         
         $this->auditLogger->shouldReceive('logSecurityEvent')
             ->once()
-            ->with('unauthorized_access_insufficient_role', $residentialUser->id, Mockery::type('array'));
+            ->with('unauthorized_access_insufficient_role', $residentialUser->id, Mockery::type('array'), Mockery::type('Illuminate\Http\Request'));
 
         $response = $this->middleware->handle($request, function () {
             return new Response('Success');
