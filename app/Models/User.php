@@ -24,6 +24,7 @@ class User extends Authenticatable
         'failed_login_attempts',
         'locked_until',
         'must_change_password',
+        'password_changed_at',
         'role_id',
     ];
 
