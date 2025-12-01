@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSecurityFieldsToUsersTable extends Migration
+class AddMissingSecurityFieldsToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,10 @@ class AddSecurityFieldsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            // Add remaining security fields for PBKDF2 password hashing
-            // Note: password_salt, failed_login_attempts, and locked_until will be added in a later migration
-            $table->string('password_hash', 255)->nullable()->after('password_changed_at');
-            $table->boolean('must_change_password')->default(false)->after('password_hash');
+            // Add the missing security fields that should have been created before
+            $table->string('password_salt', 255)->nullable()->after('password_changed_at');
+            $table->integer('failed_login_attempts')->default(0)->after('password_salt');
+            $table->timestamp('locked_until')->nullable()->after('failed_login_attempts');
         });
     }
 
@@ -30,8 +30,9 @@ class AddSecurityFieldsToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
-                'password_hash',
-                'must_change_password'
+                'password_salt',
+                'failed_login_attempts',
+                'locked_until'
             ]);
         });
     }

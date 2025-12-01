@@ -15,7 +15,7 @@ class AddCompleteSecurityFieldsToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Add role relationship (foreign key to roles table)
-            // Other security fields already exist from previous migrations
+            // Other security fields will be added in subsequent migrations
             $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null')->after('must_change_password');
         });
     }
