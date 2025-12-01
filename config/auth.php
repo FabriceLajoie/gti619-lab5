@@ -67,7 +67,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'pbkdf2',
             'model' => App\Models\User::class,
         ],
 

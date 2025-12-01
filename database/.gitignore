@@ -1,1 +1,1 @@
-*.sqlite*
+# No SQLite files needed - using MySQL only
