@@ -21,8 +21,8 @@ class AdminSecurityConfigTest extends TestCase
         parent::setUp();
 
         // Create roles
-        $adminRole = Role::create(['name' => 'Administrateur']);
-        $userRole = Role::create(['name' => 'Préposé aux clients résidentiels']);
+        $adminRole = Role::create(['name' => 'Administrateur', 'description' => 'System administrator']);
+        $userRole = Role::create(['name' => 'Préposé aux clients résidentiels', 'description' => 'Residential clerk']);
 
         // Create users
         $this->adminUser = User::create([
@@ -58,7 +58,8 @@ class AdminSecurityConfigTest extends TestCase
         $response = $this->actingAs($this->regularUser)
             ->get(route('admin.security-config'));
 
-        $response->assertStatus(403);
+        $response->assertStatus(302);
+        $response->assertRedirect(route('clients.residential'));
     }
 
     public function test_admin_can_update_security_config()

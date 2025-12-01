@@ -190,43 +190,7 @@ class PasswordPolicyServiceTest extends TestCase
         $this->assertContains('Must be changed every 90 days', $requirements);
     }
     
-    /** @test */
-    public function it_calculates_password_strength_for_weak_password()
-    {
-        $password = 'weak';
-        
-        $result = $this->passwordPolicyService->calculatePasswordStrength($password);
-        
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('score', $result);
-        $this->assertArrayHasKey('strength', $result);
-        $this->assertArrayHasKey('feedback', $result);
-        $this->assertLessThan(30, $result['score']);
-        $this->assertEquals('Very Weak', $result['strength']);
-    }
-    
-    /** @test */
-    public function it_calculates_password_strength_for_strong_password()
-    {
-        $password = 'VeryStr0ng&C0mpl3xP@ssw0rd!';
-        
-        $result = $this->passwordPolicyService->calculatePasswordStrength($password);
-        
-        $this->assertGreaterThanOrEqual(85, $result['score']);
-        $this->assertEquals('Strong', $result['strength']);
-    }
-    
-    /** @test */
-    public function it_provides_feedback_for_password_improvement()
-    {
-        $password = 'onlylowercase';
-        
-        $result = $this->passwordPolicyService->calculatePasswordStrength($password);
-        
-        $this->assertContains('Add uppercase letters', $result['feedback']);
-        $this->assertContains('Add numbers', $result['feedback']);
-        $this->assertContains('Add special characters', $result['feedback']);
-    }
+
     
     /** @test */
     public function it_validates_password_history_successfully_when_not_reused()

@@ -207,10 +207,7 @@ class AdminController extends Controller
             }
 
             // Unlock user
-            $user->update([
-                'locked_until' => null,
-                'failed_attempts' => 0
-            ]);
+            $user->unlock();
 
             // Log
             $this->auditLogger->logAccountUnlock($user->id, Auth::id(), $request);

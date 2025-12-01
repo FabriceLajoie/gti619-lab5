@@ -156,4 +156,17 @@ class User extends Authenticatable
 
         return $this->locked_until->diffForHumans();
     }
+
+    /**
+     * Unlock the user account
+     *
+     * @return void
+     */
+    public function unlock()
+    {
+        $this->update([
+            'failed_login_attempts' => 0,
+            'locked_until' => null
+        ]);
+    }
 }

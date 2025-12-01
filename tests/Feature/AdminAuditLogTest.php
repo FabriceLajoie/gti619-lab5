@@ -210,9 +210,9 @@ class AdminAuditLogTest extends TestCase
         $response->assertViewHas(['stats', 'authStats', 'highSeverityEvents', 'eventDistribution']);
         
         // Vérifier que les statistiques sont affichées
-        $response->assertSee('Total Logs');
-        $response->assertSee('Authentication Activity');
-        $response->assertSee('High Severity Events');
+        $response->assertSee('Total des journaux');
+        $response->assertSee('Activité d\'authentification (Aujourd\'hui)', false);
+        $response->assertSee('Événements récents de gravité élevée');
     }
 
     /** @test */
@@ -267,7 +267,7 @@ class AdminAuditLogTest extends TestCase
             ->get(route('admin.audit-log-details', $mainLog));
 
         $response->assertStatus(200);
-        $response->assertSee('Recent Events for This User');
+        $response->assertSee('Événements récents pour cet utilisateur');
         $response->assertSee($relatedLog1->formatted_event_type);
         $response->assertSee($relatedLog2->formatted_event_type);
     }

@@ -197,14 +197,15 @@ class AuditLoggerTest extends TestCase
     /** @test */
     public function it_can_log_security_config_change()
     {
-        $changes = ['max_login_attempts' => ['old' => 3, 'new' => 5]];
+        $oldConfig = ['max_login_attempts' => 3, 'session_timeout' => 30];
+        $newConfig = ['max_login_attempts' => 5, 'session_timeout' => 30];
         $request = Request::create('/admin/security', 'PUT');
 
-        $auditLog = $this->auditLogger->logSecurityConfigChange($this->user->id, $changes, $request);
+        $auditLog = $this->auditLogger->logSecurityConfigChange($this->user->id, $oldConfig, $newConfig, $request);
 
         $this->assertEquals('security_config_changed', $auditLog->event_type);
         $this->assertEquals($this->user->id, $auditLog->user_id);
-        $this->assertEquals($changes, $auditLog->details['changes']);
+        $this->assertEquals(['max_login_attempts' => ['old' => 3, 'new' => 5]], $auditLog->details['changes']);
         $this->assertEquals('Security configuration updated', $auditLog->details['message']);
 
         $this->assertDatabaseHas('audit_logs', [
@@ -314,7 +315,10 @@ class AuditLoggerTest extends TestCase
         $this->assertEquals($details, $auditLog->details);
         $this->assertDatabaseHas('audit_logs', [
             'event_type' => 'test_event',
-            'details' => json_encode($details),
         ]);
+        
+        // Verify the details can be decoded back to the original array
+        $savedLog = \App\Models\AuditLog::where('event_type', 'test_event')->latest()->first();
+        $this->assertEquals($details, $savedLog->details);
     }
 }
