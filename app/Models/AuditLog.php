@@ -11,7 +11,7 @@ class AuditLog extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable
      *
      * @var array
      */
@@ -24,7 +24,7 @@ class AuditLog extends Model
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast to native types
      *
      * @var array
      */
@@ -35,7 +35,7 @@ class AuditLog extends Model
     ];
 
     /**
-     * Get the user associated with this audit log entry.
+     * Get the user associated with this audit log entry
      */
     public function user(): BelongsTo
     {
@@ -43,7 +43,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to filter by event type.
+     * Scope to filter by event type
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $eventType
@@ -55,7 +55,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to filter by user.
+     * Scope to filter by user
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $userId
@@ -67,7 +67,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to filter by date range.
+     * Scope to filter by date range
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $startDate
@@ -80,7 +80,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to get recent logs.
+     * Scope for recent logs
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $days
@@ -92,7 +92,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to get authentication-related logs.
+     * Scope for authentication-related logs
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -109,7 +109,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to get security-related logs.
+     * Scope for security-related logs
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -127,7 +127,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Get formatted event type for display.
+     * Get formatted event type for display
      *
      * @return string
      */
@@ -154,7 +154,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Get the severity level of the event.
+     * Get the severity level
      *
      * @return string
      */
@@ -185,7 +185,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Get the CSS class for the severity level.
+     * Get the CSS class for the severity leve
      *
      * @return string
      */

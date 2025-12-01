@@ -52,7 +52,7 @@ class SecurityConfig extends Model
     ];
 
     /**
-     * Get the singleton security configuration instance
+     * get singleton security configuration instance
      */
     public static function getInstance()
     {
@@ -80,7 +80,7 @@ class SecurityConfig extends Model
     }
 
     /**
-     * Get validation messages
+     * Get valid messages
      */
     public static function validationMessages()
     {

@@ -24,7 +24,7 @@ class AdminController extends Controller
     protected $passwordHistoryService;
 
     /**
-     * Create a new controller instance.
+     * new controller instance
      */
     public function __construct(
         SecurityConfigService $securityConfigService, 
@@ -39,7 +39,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the security configuration page.
+     * security configuration page
      *
      * @return \Illuminate\View\View
      */
@@ -51,7 +51,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Update security configuration.
+     * Update security configuration
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -62,7 +62,6 @@ class AdminController extends Controller
             $oldConfig = $this->securityConfigService->getConfig()->toArray();
             $updatedConfig = $this->securityConfigService->updateConfig($request->all());
             
-            // Log the configuration change
             $this->auditLogger->logSecurityConfigChange(
                 Auth::id(),
                 $oldConfig,
@@ -85,7 +84,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Reset security configuration to defaults.
+     * Reset sec config to defaults
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -115,7 +114,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the users management page.
+     * Show the users management page
      *
      * @param Request $request
      * @return \Illuminate\View\View
@@ -157,7 +156,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show user details.
+     * Show user details
      *
      * @param User $user
      * @return \Illuminate\View\View
@@ -193,7 +192,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Unlock a user account.
+     * Unlock account
      *
      * @param User $user
      * @param Request $request
@@ -207,13 +206,13 @@ class AdminController extends Controller
                     ->with('warning', 'User account is not currently locked.');
             }
 
-            // Unlock the user
+            // Unlock user
             $user->update([
                 'locked_until' => null,
                 'failed_attempts' => 0
             ]);
 
-            // Log the unlock action
+            // Log
             $this->auditLogger->logAccountUnlock($user->id, Auth::id(), $request);
 
             return redirect()->back()
@@ -226,7 +225,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the create user form.
+     * Show create user form
      *
      * @return \Illuminate\View\View
      */
@@ -237,7 +236,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Store a new user.
+     * Store new user
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -276,7 +275,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the edit user form.
+     * Show the edit user form
      *
      * @param User $user
      * @return \Illuminate\View\View
@@ -288,8 +287,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Update a user.
-     *
+     * Update user
+     * 
      * @param Request $request
      * @param User $user
      * @return \Illuminate\Http\RedirectResponse
@@ -325,7 +324,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show user activity.
+     * Show user activity
      *
      * @param User $user
      * @param Request $request
@@ -357,7 +356,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Reset user password.
+     * Reset user password
      *
      * @param Request $request
      * @param User $user
@@ -394,7 +393,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Terminate all user sessions.
+     * Terminate all user sessions
      *
      * @param Request $request
      * @param User $user
@@ -403,8 +402,6 @@ class AdminController extends Controller
     public function terminateUserSessions(Request $request, User $user)
     {
         try {
-            // In a real application, you would invalidate all sessions for this user
-            // For now, we'll just log the action
             
             // Log session termination
             $this->auditLogger->logSessionsTerminated($user->id, Auth::id(), $request);
@@ -419,7 +416,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the audit logs page.
+     * Show the audit logs page
      *
      * @param Request $request
      * @return \Illuminate\View\View
@@ -451,7 +448,7 @@ class AdminController extends Controller
         // Pagination
         $auditLogs = $query->paginate(25)->withQueryString();
 
-        // Get filter options
+        // filter options
         $eventTypes = AuditLog::select('event_type')
             ->distinct()
             ->orderBy('event_type')
@@ -465,7 +462,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Show audit log details.
+     * Show audit log details
      *
      * @param AuditLog $auditLog
      * @return \Illuminate\View\View
@@ -478,7 +475,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Export audit logs as CSV.
+     * Export logs to CSV
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
@@ -487,7 +484,6 @@ class AdminController extends Controller
     {
         $query = AuditLog::with('user')->orderBy('created_at', 'desc');
 
-        // Apply same filters as the main view
         if ($request->filled('event_type')) {
             $query->byEventType($request->event_type);
         }
@@ -509,7 +505,7 @@ class AdminController extends Controller
 
         $filename = 'audit_logs_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
-        // For testing, we'll generate the CSV content directly
+        // For testing
         if (app()->environment('testing')) {
             $csvContent = "ID,Event Type,User,IP Address,User Agent,Details,Severity,Created At\n";
             
@@ -536,7 +532,6 @@ class AdminController extends Controller
         return response()->streamDownload(function () use ($query) {
             $handle = fopen('php://output', 'w');
             
-            // CSV headers
             fputcsv($handle, [
                 'ID',
                 'Event Type',
@@ -548,7 +543,6 @@ class AdminController extends Controller
                 'Created At'
             ]);
 
-            // Stream data in chunks to handle large datasets
             $query->chunk(1000, function ($auditLogs) use ($handle) {
                 foreach ($auditLogs as $log) {
                     fputcsv($handle, [
@@ -572,7 +566,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Get statistics for the audit logs dashboard.
+     * Get statistics for the audit log
      *
      * @return \Illuminate\View\View
      */
@@ -585,7 +579,6 @@ class AdminController extends Controller
             'logs_this_month' => AuditLog::where('created_at', '>=', Carbon::now()->startOfMonth())->count(),
         ];
 
-        // Authentication statistics
         $authStats = [
             'successful_logins_today' => AuditLog::byEventType('login_success')
                 ->whereDate('created_at', Carbon::today())->count(),
@@ -595,14 +588,12 @@ class AdminController extends Controller
                 ->whereDate('created_at', Carbon::today())->count(),
         ];
 
-        // Recent high-severity events
         $highSeverityEvents = AuditLog::with('user')
             ->whereIn('event_type', $this->getEventTypesBySeverity()['high'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        // Event type distribution (last 30 days)
         $eventDistribution = AuditLog::selectRaw('event_type, COUNT(*) as count')
             ->where('created_at', '>=', Carbon::now()->subDays(30))
             ->groupBy('event_type')
@@ -618,7 +609,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Get event types grouped by severity level.
+     * Get event types grouped by severity level
      *
      * @return array
      */

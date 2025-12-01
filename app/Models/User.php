@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass assignable
      *
      * @var array
      */
@@ -34,7 +34,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes that should be hidden for arrays
      *
      * @var array
      */
@@ -45,7 +45,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast to native types
      *
      * @var array
      */
@@ -63,7 +63,7 @@ class User extends Authenticatable
     }
     
     /**
-     * Get the password history for the user.
+     * Get the password history for the user
      */
     public function passwordHistories()
     {
@@ -71,7 +71,7 @@ class User extends Authenticatable
     }
     
     /**
-     * Get the user's role (single role relationship).
+     * Get the user's role (single role relationship)
      */
     public function role()
     {
@@ -79,7 +79,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has a specific role.
+     * Check if user has a specific role
      *
      * @param string $roleName
      * @return bool
@@ -90,7 +90,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has any of the specified roles.
+     * Check if user has any of the specified roles
      *
      * @param array $roles
      * @return bool
@@ -101,7 +101,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has a specific permission.
+     * Check if user has a specific permission
      *
      * @param string $permission
      * @return bool

@@ -9,7 +9,7 @@ use App\Models\Permission;
 class PermissionService
 {
     /**
-     * Check if a user has a specific permission.
+     * Check if a user has a specific permission
      *
      * @param User $user
      * @param string $permission
@@ -25,7 +25,7 @@ class PermissionService
     }
 
     /**
-     * Check if a user has permission for a specific resource and action.
+     * Check if a user has permission for resource and action
      *
      * @param User $user
      * @param string $resource
@@ -42,7 +42,7 @@ class PermissionService
     }
 
     /**
-     * Check if a user has any of the specified roles.
+     * Check if a user has any of the roles
      *
      * @param User $user
      * @param array $roles
@@ -58,7 +58,7 @@ class PermissionService
     }
 
     /**
-     * Get all permissions for a user.
+     * Get all permissions for a user
      *
      * @param User $user
      * @return \Illuminate\Database\Eloquent\Collection
@@ -73,7 +73,7 @@ class PermissionService
     }
 
     /**
-     * Get default permissions for each role based on requirements.
+     * Get default permissions for each role based on requirements
      *
      * @return array
      */
@@ -106,7 +106,7 @@ class PermissionService
     }
 
     /**
-     * Check if user can access a specific route based on role requirements.
+     * Check if user can access a specific route based on role requirements
      *
      * @param User $user
      * @param string $routeName
@@ -117,7 +117,6 @@ class PermissionService
         $routePermissions = $this->getRoutePermissions();
         
         if (!isset($routePermissions[$routeName])) {
-            // If route is not defined in permissions, allow access (backward compatibility)
             return true;
         }
 
@@ -133,7 +132,7 @@ class PermissionService
     }
 
     /**
-     * Get route to permission mapping.
+     * Get route to permission mapping
      *
      * @return array
      */

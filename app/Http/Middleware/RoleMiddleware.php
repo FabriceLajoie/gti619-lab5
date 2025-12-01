@@ -17,7 +17,7 @@ class RoleMiddleware
     }
 
     /**
-     * Handle an incoming request.
+     * Handle incoming request
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
@@ -26,19 +26,19 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // Check if user is authenticated
+        // Check if user is auth
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
         
-        // Load user's role if not already loaded
+        // Load user's role if not already
         if (!$user->relationLoaded('role')) {
             $user->load('role');
         }
 
-        // Check if user has a role assigned
+        // Check if user has role assigned
         if (!$user->role) {
             $this->auditLogger->logSecurityEvent('unauthorized_access_no_role', $user->id, [
                 'route' => $request->route()->getName(),
@@ -51,7 +51,7 @@ class RoleMiddleware
 
         $userRole = $user->role->name;
 
-        // Check if user's role is in the allowed roles
+        // Check if user role is in the allowed roles
         if (!in_array($userRole, $roles)) {
             $this->auditLogger->logSecurityEvent('unauthorized_access_insufficient_role', $user->id, [
                 'user_role' => $userRole,
@@ -60,12 +60,12 @@ class RoleMiddleware
                 'url' => $request->url()
             ], $request);
 
-            // Redirect based on user's role to appropriate page
+            // Redirect based on user role to appropriate page
             $redirectRoute = $this->getRedirectRouteForRole($userRole);
             return redirect()->route($redirectRoute)->with('error', 'Access denied: Insufficient permissions.');
         }
 
-        // Log successful access
+        // Log access
         $this->auditLogger->logSecurityEvent('authorized_access', $user->id, [
             'user_role' => $userRole,
             'route' => $request->route()->getName(),
@@ -76,7 +76,7 @@ class RoleMiddleware
     }
 
     /**
-     * Get appropriate redirect route based on user's role
+     * Get appropriate redirect route based role
      *
      * @param string $role
      * @return string

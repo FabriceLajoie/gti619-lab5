@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ForcePasswordChange
 {
     /**
-     * Handle an incoming request.
+     * Handle an income request
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next

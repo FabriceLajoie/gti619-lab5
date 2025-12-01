@@ -20,7 +20,7 @@ class PermissionMiddleware
     }
 
     /**
-     * Handle an incoming request.
+     * Handle an incoming request
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
@@ -41,7 +41,7 @@ class PermissionMiddleware
             $user->load('role.permissions');
         }
 
-        // Check if user has a role assigned
+        // Check if user has role assigned
         if (!$user->role) {
             $this->auditLogger->logSecurityEvent('unauthorized_access_no_role', $user->id, [
                 'route' => $request->route()->getName(),
@@ -75,7 +75,7 @@ class PermissionMiddleware
             return redirect()->route($redirectRoute)->with('error', 'Access denied: Insufficient permissions.');
         }
 
-        // Log successful access
+        // Log access
         $this->auditLogger->logSecurityEvent('authorized_access', $user->id, [
             'user_role' => $user->role->name,
             'route' => $request->route()->getName(),

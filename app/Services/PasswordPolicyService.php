@@ -82,12 +82,12 @@ class PasswordPolicyService
         $requirements = $this->securityConfig->getPasswordRequirements();
         $errors = [];
         
-        // Check minimum length
+        // Check min length
         if (strlen($password) < $requirements['min_length']) {
             $errors[] = "Password must be at least {$requirements['min_length']} characters long";
         }
         
-        // Check maximum length (security best practice)
+        // Check max length
         if (strlen($password) > 128) {
             $errors[] = "Password cannot exceed 128 characters";
         }
@@ -151,7 +151,7 @@ class PasswordPolicyService
     }
     
     /**
-     * Check if user's password has expired
+     * Check if user's password expired
      * 
      * @param User $user The user
      * @return bool True if password has expired, false otherwise
@@ -165,7 +165,7 @@ class PasswordPolicyService
             return false;
         }
         
-        // If user has no password_changed_at date, consider it expired
+        // If user has no password_changed_at date, consider expired
         if (!$user->password_changed_at) {
             return true;
         }
@@ -175,7 +175,7 @@ class PasswordPolicyService
     }
     
     /**
-     * Check if user must change password (forced change)
+     * Check if user must change password
      * 
      * @param User $user The user
      * @return bool True if user must change password, false otherwise
@@ -208,7 +208,7 @@ class PasswordPolicyService
     }
     
     /**
-     * Mark user password as changed (updates password_changed_at and clears must_change_password)
+     * Mark user password as changed (updates password_changed_at et clears must_change_password)
      * 
      * @param User $user The user
      * @return void
@@ -245,7 +245,7 @@ class PasswordPolicyService
     }
     
     /**
-     * Get password policy requirements as human-readable text
+     * Get password policy requirements as text
      * 
      * @return array Array of requirement descriptions
      */
@@ -306,7 +306,7 @@ class PasswordPolicyService
             $errors[] = "Password is too common and easily guessable";
         }
         
-        // Check for keyboard patterns (only longer patterns to avoid false positives)
+        // Check for keyboard patterns
         $keyboardPatterns = [
             'qwerty', 'asdf', 'zxcv', '12345', 'abcde', '!@#$%'
         ];
@@ -323,7 +323,7 @@ class PasswordPolicyService
             $errors[] = "Password cannot contain more than 3 repeated characters in a row";
         }
         
-        // Check for simple sequences (4+ characters to avoid false positives)
+        // Check for simple sequences
         if (preg_match('/(?:0123|1234|2345|3456|4567|5678|6789|7890|abcd|bcde|cdef|defg|efgh|fghi|ghij|hijk|ijkl|jklm|klmn|lmno|mnop|nopq|opqr|pqrs|qrst|rstu|stuv|tuvw|uvwx|vwxy|wxyz)/i', $password)) {
             $errors[] = "Password cannot contain simple sequences (1234, abcd, etc.)";
         }
@@ -331,93 +331,4 @@ class PasswordPolicyService
         return $errors;
     }
     
-    /**
-     * Generate password strength score (0-100)
-     * 
-     * @param string $password The password to score
-     * @return array Score and feedback
-     */
-    public function calculatePasswordStrength(string $password): array
-    {
-        $score = 0;
-        $feedback = [];
-        
-        // Length scoring (up to 25 points)
-        $length = strlen($password);
-        if ($length >= 8) $score += 5;
-        if ($length >= 12) $score += 5;
-        if ($length >= 16) $score += 10;
-        if ($length >= 20) $score += 5;
-        
-        // Character variety scoring (up to 40 points)
-        if (preg_match('/[a-z]/', $password)) {
-            $score += 10;
-        } else {
-            $feedback[] = "Add lowercase letters";
-        }
-        
-        if (preg_match('/[A-Z]/', $password)) {
-            $score += 10;
-        } else {
-            $feedback[] = "Add uppercase letters";
-        }
-        
-        if (preg_match('/[0-9]/', $password)) {
-            $score += 10;
-        } else {
-            $feedback[] = "Add numbers";
-        }
-        
-        if (preg_match('/[^A-Za-z0-9]/', $password)) {
-            $score += 10;
-        } else {
-            $feedback[] = "Add special characters";
-        }
-        
-        // Complexity scoring (up to 35 points)
-        $uniqueChars = count(array_unique(str_split($password)));
-        $score += min(15, $uniqueChars);
-        
-        // Penalty for patterns
-        if (preg_match('/(.)\1{2,}/', $password)) {
-            $score -= 10;
-            $feedback[] = "Avoid repeated characters";
-        }
-        
-        // Bonus for mixed case within words
-        if (preg_match('/[a-z][A-Z]|[A-Z][a-z]/', $password)) {
-            $score += 5;
-        }
-        
-        // Bonus for numbers mixed with letters
-        if (preg_match('/[a-zA-Z][0-9]|[0-9][a-zA-Z]/', $password)) {
-            $score += 5;
-        }
-        
-        // Bonus for special chars mixed with alphanumeric
-        if (preg_match('/[a-zA-Z0-9][^a-zA-Z0-9]|[^a-zA-Z0-9][a-zA-Z0-9]/', $password)) {
-            $score += 5;
-        }
-        
-        $score = max(0, min(100, $score));
-        
-        // Determine strength level
-        if ($score < 30) {
-            $strength = 'Very Weak';
-        } elseif ($score < 50) {
-            $strength = 'Weak';
-        } elseif ($score < 70) {
-            $strength = 'Fair';
-        } elseif ($score < 85) {
-            $strength = 'Good';
-        } else {
-            $strength = 'Strong';
-        }
-        
-        return [
-            'score' => $score,
-            'strength' => $strength,
-            'feedback' => $feedback
-        ];
-    }
 }

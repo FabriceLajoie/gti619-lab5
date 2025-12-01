@@ -54,7 +54,7 @@ class AuthController extends Controller
             // Log failed attempt for non-existent user
             $this->auditLogger->logFailedAuthentication($email, $request);
             
-            // Apply progressive delay even for non-existent users to prevent enumeration
+            // Apply progressive delay for non-existent users to prevent enumeration
             $this->applyProgressiveDelay(1);
             
             return back()->withErrors([
@@ -62,7 +62,7 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        // Check if account is locked
+        // Check if account locked
         if ($this->isAccountLocked($user)) {
             $this->auditLogger->logFailedAuthentication($email, $request);
             
@@ -71,9 +71,9 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        // Attempt authentication using custom PBKDF2 provider
+        // Attempt authentication using PBKDF2 provider
         if (Auth::attempt($credentials)) {
-            // Reset failed attempts on successful login
+            // Reset failed attempts on login
             $user->failed_login_attempts = 0;
             $user->locked_until = null;
             $user->save();
@@ -94,7 +94,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Check if account is locked
+     * Check if account locked
      */
     protected function isAccountLocked(User $user): bool
     {
@@ -102,7 +102,7 @@ class AuthController extends Controller
             return false;
         }
 
-        // Check if lock period has expired
+        // Check if lock period expired
         if (Carbon::now()->greaterThan($user->locked_until)) {
             // Unlock account automatically
             $user->locked_until = null;
@@ -121,7 +121,7 @@ class AuthController extends Controller
     {
         $securityConfig = $this->securityConfigService->getConfig();
         
-        // Increment failed attempts
+        // Inc failed attempts
         $user->failed_login_attempts = ($user->failed_login_attempts ?? 0) + 1;
         
         // Log failed attempt
@@ -143,11 +143,11 @@ class AuthController extends Controller
     }
 
     /**
-     * Apply progressive delay to prevent brute force attacks
+     * apply progressive delay to prevent brute force attacks
      */
     protected function applyProgressiveDelay(int $failedAttempts): void
     {
-        // Progressive delay: 1s, 2s, 4s, 8s, 16s (max 16 seconds)
+        // 1s, 2s, 4s, 8s, 16s (max 16 seconds)
         $delay = min(pow(2, $failedAttempts - 1), 16);
         sleep($delay);
     }

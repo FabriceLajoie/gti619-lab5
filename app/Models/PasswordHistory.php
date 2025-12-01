@@ -11,7 +11,6 @@ class PasswordHistory extends Model
     use HasFactory;
     
     /**
-     * The attributes that are mass assignable.
      *
      * @var array
      */
@@ -24,7 +23,7 @@ class PasswordHistory extends Model
     ];
     
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes that should be hidden for array
      *
      * @var array
      */
@@ -34,7 +33,7 @@ class PasswordHistory extends Model
     ];
     
     /**
-     * The attributes that should be cast to native types.
+     * native type
      *
      * @var array
      */
@@ -45,7 +44,7 @@ class PasswordHistory extends Model
     ];
     
     /**
-     * Get the user that owns the password history.
+     * Get the user that owns the password history
      */
     public function user(): BelongsTo
     {

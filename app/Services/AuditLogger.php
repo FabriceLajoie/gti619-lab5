@@ -155,7 +155,7 @@ class AuditLogger
      */
     public function logSecurityConfigChange(int $userId, array $oldConfig, array $newConfig, ?Request $request = null, ?string $message = null): AuditLog
     {
-        // Calculate the actual changes
+        // Calculate actual changes
         $changes = [];
         foreach ($newConfig as $key => $newValue) {
             $oldValue = $oldConfig[$key] ?? null;

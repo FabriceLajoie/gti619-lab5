@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class PermissionFactory extends Factory
 {
     /**
-     * The name of the factory's corresponding model.
+     * The name of the factory's corresponding model
      *
      * @var string
      */
     protected $model = Permission::class;
 
     /**
-     * Define the model's default state.
+     * model's default state
      *
      * @return array
      */
@@ -45,7 +45,7 @@ class PermissionFactory extends Factory
     }
 
     /**
-     * Create a specific permission by name.
+     * Create a specific permission by name
      *
      * @param string $name
      * @param string $resource

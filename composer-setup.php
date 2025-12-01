@@ -1,13 +1,13 @@
 <?php
 
 /*
- * This file is part of Composer.
+ * This file is part of Composer
  *
  * (c) Nils Adermann <naderman@naderman.de>
  *     Jordi Boggiano <j.boggiano@seld.be>
  *
  * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * file that was distributed with this source code
  */
 
 setupEnvironment();
@@ -23,7 +23,6 @@ function setupEnvironment()
     ini_set('display_errors', 1);
 
     if (extension_loaded('uopz') && !(ini_get('uopz.disable') || ini_get('uopz.exit'))) {
-        // uopz works at opcode level and disables exit calls
         if (function_exists('uopz_allow_exit')) {
             @uopz_allow_exit(true);
         } else {
@@ -47,7 +46,6 @@ function setupEnvironment()
  */
 function process($argv)
 {
-    // Determine ANSI output from --ansi and --no-ansi flags
     setUseAnsi($argv);
 
     $help = in_array('--help', $argv) || in_array('-h', $argv);
@@ -84,7 +82,6 @@ function process($argv)
     $ok = checkPlatform($warnings, $quiet, $disableTls, true);
 
     if ($check) {
-        // Only show warnings if we haven't output any errors
         if ($ok) {
             showWarnings($warnings);
             showSecurityWarning($disableTls);
@@ -250,7 +247,7 @@ function checkParams($installDir, $version, $cafile)
 /**
  * Checks the platform for possible issues running Composer
  *
- * Errors are written to the output, warnings are saved for later display.
+ * Errors are written to the output, warnings are saved for later display
  *
  * @param array $warnings Populated by method, to be shown later
  * @param bool $quiet Quiet mode
@@ -397,7 +394,7 @@ function getPlatformIssues(&$errors, &$warnings, $install)
     }
 
     if (extension_loaded('openssl') && OPENSSL_VERSION_NUMBER < 0x1000100f) {
-        // Attempt to parse version number out, fallback to whole string value.
+        // Attempt to parse version number out, fallback to whole string value
         $opensslVersion = trim(strstr(OPENSSL_VERSION_TEXT, ' '));
         $opensslVersion = substr($opensslVersion, 0, strpos($opensslVersion, ' '));
         $opensslVersion = $opensslVersion ? $opensslVersion : OPENSSL_VERSION_TEXT;
@@ -1437,7 +1434,7 @@ class HttpClient {
                 $this->options['ssl']['SNI_server_name'] = parse_url($url, PHP_URL_HOST);
             }
         }
-        // Keeping the above mostly isolated from the code copied from Composer.
+        // Keeping the above mostly isolated from the code copied from Composer
         return $this->getMergedStreamContext($url);
     }
 
@@ -1488,10 +1485,10 @@ class HttpClient {
         ));
 
         /**
-         * CN_match and SNI_server_name are only known once a URL is passed.
-         * They will be set in the getOptionsForUrl() method which receives a URL.
+         * CN_match and SNI_server_name are only known once a URL is passed
+         * They will be set in the getOptionsForUrl() method which receives a URL
          *
-         * cafile or capath can be overridden by passing in those options to constructor.
+         * cafile or capath can be overridden by passing in those options to constructor
          */
         $options = array(
             'ssl' => array(
@@ -1503,8 +1500,8 @@ class HttpClient {
         );
 
         /**
-         * Attempt to find a local cafile or throw an exception.
-         * The user may go download one if this occurs.
+         * Attempt to find a local cafile or throw an exception
+         * The user may go download one if this occurs
          */
         if (!$cafile) {
             $cafile = self::getSystemCaRootBundlePath();
@@ -1518,7 +1515,7 @@ class HttpClient {
         }
 
         /**
-         * Disable TLS compression to prevent CRIME attacks where supported.
+         * Disable TLS compression to prevent CRIME attacks where supported
          */
         if (version_compare(PHP_VERSION, '5.4.13') >= 0) {
             $options['ssl']['disable_compression'] = true;
@@ -1530,7 +1527,7 @@ class HttpClient {
     /**
      * function copied from Composer\Util\StreamContextFactory::initOptions
      *
-     * Any changes should be applied there as well, or backported here.
+     * Any changes should be applied there as well, or backported here
      *
      * @param string $url URL the context is to be used for
      * @return resource Default context
@@ -1625,7 +1622,7 @@ class HttpClient {
     }
 
     /**
-    * This method was adapted from Sslurp.
+    * This method was adapted from Sslurp
     * https://github.com/EvanDotPro/Sslurp
     *
     * (c) Evan Coury <me@evancoury.com>
@@ -1633,17 +1630,17 @@ class HttpClient {
     * For the full copyright and license information, please see below:
     *
     * Copyright (c) 2013, Evan Coury
-    * All rights reserved.
+    * All rights reserved
     *
     * Redistribution and use in source and binary forms, with or without modification,
     * are permitted provided that the following conditions are met:
     *
     *     * Redistributions of source code must retain the above copyright notice,
-    *       this list of conditions and the following disclaimer.
+    *       this list of conditions and the following disclaimer
     *
     *     * Redistributions in binary form must reproduce the above copyright notice,
     *       this list of conditions and the following disclaimer in the documentation
-    *       and/or other materials provided with the distribution.
+    *       and/or other materials provided with the distribution
     *
     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
     * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -1654,7 +1651,7 @@ class HttpClient {
     * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
     * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-    * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
     */
     public static function getSystemCaRootBundlePath()
     {
@@ -1662,15 +1659,15 @@ class HttpClient {
             return self::$caPath;
         }
 
-        // If SSL_CERT_FILE env variable points to a valid certificate/bundle, use that.
-        // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
+        // If SSL_CERT_FILE env variable points to a valid certificate/bundle, use that
+        // This mimics how OpenSSL uses the SSL_CERT_FILE env variable
         $envCertFile = getenv('SSL_CERT_FILE');
         if ($envCertFile && is_readable($envCertFile) && validateCaFile(file_get_contents($envCertFile))) {
             return self::$caPath = $envCertFile;
         }
 
-        // If SSL_CERT_DIR env variable points to a valid certificate/bundle, use that.
-        // This mimics how OpenSSL uses the SSL_CERT_FILE env variable.
+        // If SSL_CERT_DIR env variable points to a valid certificate/bundle, use that
+        // This mimics how OpenSSL uses the SSL_CERT_FILE env variable
         $envCertDir = getenv('SSL_CERT_DIR');
         if ($envCertDir && is_dir($envCertDir) && is_readable($envCertDir)) {
             return self::$caPath = $envCertDir;

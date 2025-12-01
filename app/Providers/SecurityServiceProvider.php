@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 class SecurityServiceProvider extends ServiceProvider
 {
     /**
-     * Register services.
+     * Register services
      *
      * @return void
      */
@@ -30,7 +30,7 @@ class SecurityServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap services.
+     * Bootstrap services
      *
      * @return void
      */

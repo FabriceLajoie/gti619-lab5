@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class AuditLogFactory extends Factory
 {
     /**
-     * The name of the factory's corresponding model.
+     * name of the factory's corresponding model
      *
      * @var string
      */
     protected $model = AuditLog::class;
 
     /**
-     * Define the model's default state.
+     * define the model's default state
      *
      * @return array
      */
@@ -51,7 +51,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log is for a successful login.
+     * audit log is for a successful login
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -68,7 +68,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log is for a failed login.
+     *  failed login
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -87,7 +87,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log is for an account lockout.
+     * account lockout
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -105,7 +105,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log is for a password change.
+     * password change
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -123,7 +123,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log is for unauthorized access.
+     * unauthorized access
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -142,7 +142,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log has high severity.
+     * high severity
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -163,7 +163,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log has medium severity.
+     * medium severity
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -185,7 +185,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log has low severity.
+     * low severity
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -206,7 +206,7 @@ class AuditLogFactory extends Factory
     }
 
     /**
-     * Indicate that the audit log has no associated user.
+     * no associated user
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */

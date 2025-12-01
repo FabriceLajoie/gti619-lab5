@@ -17,7 +17,7 @@ class PBKDF2UserProvider extends EloquentUserProvider
     }
 
     /**
-     * Validate a user against the given credentials.
+     * Validate a user with credentials
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  array  $credentials
@@ -32,7 +32,7 @@ class PBKDF2UserProvider extends EloquentUserProvider
             $plain,
             $user->password_salt,
             $user->password,
-            100000 // Default iterations
+            100000
         );
     }
 }

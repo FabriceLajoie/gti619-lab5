@@ -12,7 +12,7 @@ class Role extends Model
     protected $fillable = ['name', 'description'];
 
     /**
-     * Get the users that have this role.
+     * Get the users that have this role
      */
     public function users() 
     {
@@ -20,7 +20,7 @@ class Role extends Model
     }
 
     /**
-     * Get the permissions for this role.
+     * Get the permissions for this role
      */
     public function permissions()
     {
@@ -28,7 +28,7 @@ class Role extends Model
     }
 
     /**
-     * Check if role has a specific permission.
+     * Check if role has a specific permission
      *
      * @param string $permission
      * @return bool
@@ -39,7 +39,7 @@ class Role extends Model
     }
 
     /**
-     * Check if role has permission for a resource and action.
+     * Check if role has permission for a resource and action
      *
      * @param string $resource
      * @param string $action

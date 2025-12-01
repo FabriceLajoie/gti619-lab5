@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class RoleFactory extends Factory
 {
     /**
-     * The name of the factory's corresponding model.
+     * The name of the factory's corresponding model
      *
      * @var string
      */
     protected $model = Role::class;
 
     /**
-     * Define the model's default state.
+     * model's default state
      *
      * @return array
      */
@@ -26,7 +26,6 @@ class RoleFactory extends Factory
                 'Administrateur',
                 'Préposé aux clients résidentiels',
                 'Préposé aux clients d\'affaire',
-                'Manager',
                 'User'
             ]),
             'description' => $this->faker->sentence(),
@@ -34,7 +33,7 @@ class RoleFactory extends Factory
     }
 
     /**
-     * Create an administrator role.
+     * Create admin role
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -49,7 +48,7 @@ class RoleFactory extends Factory
     }
 
     /**
-     * Create a residential client role.
+     * residential client role
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -64,7 +63,7 @@ class RoleFactory extends Factory
     }
 
     /**
-     * Create a business client role.
+     * business client role
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */

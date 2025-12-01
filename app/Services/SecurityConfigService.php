@@ -12,8 +12,8 @@ class SecurityConfigService
 
     public function __construct()
     {
-        // Don't cache the config in constructor, always get fresh instance
-    }
+        //
+        }
 
     /**
      * Get the current security configuration

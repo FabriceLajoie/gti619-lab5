@@ -99,7 +99,7 @@ class PBKDF2PasswordHasher
     }
     
     /**
-     * Generate cryptographically secure salt
+     * Generate secure salt
      * 
      * @return string Raw binary salt
      * @throws Exception If random bytes generation fails

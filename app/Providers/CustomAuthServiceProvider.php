@@ -10,7 +10,7 @@ use App\Services\PBKDF2PasswordHasher;
 class CustomAuthServiceProvider extends ServiceProvider
 {
     /**
-     * Register services.
+     * Register services
      *
      * @return void
      */
@@ -20,7 +20,6 @@ class CustomAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap services.
      *
      * @return void
      */
