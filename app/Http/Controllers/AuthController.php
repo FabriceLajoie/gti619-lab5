@@ -160,6 +160,8 @@ class AuthController extends Controller
         return view('dashboard');
     }
 
+
+
     /**
      * Handle logout
      */

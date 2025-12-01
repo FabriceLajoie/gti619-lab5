@@ -29,10 +29,24 @@ Route::post('/password/change', [App\Http\Controllers\PasswordController::class,
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
-    Route::get('/settings', [DashboardController::class, 'showSettings'])->name('settings');
-    Route::get('/clients/residential', [DashboardController::class, 'showResidentialClients'])->name('clients.residential');
-    Route::get('/clients/business', [DashboardController::class, 'showBusinessClients'])->name('clients.business');
-    Route::resource('client', ClientController::class);
+    
+    // Admin-only routes
+    Route::middleware(['role:Administrateur'])->group(function () {
+        Route::get('/settings', [DashboardController::class, 'showSettings'])->name('settings');
+    });
+    
+    // Residential clients - accessible by Administrateur and Préposé aux clients résidentiels
+    Route::middleware(['role:Administrateur,Préposé aux clients résidentiels'])->group(function () {
+        Route::get('/clients/residential', [DashboardController::class, 'showResidentialClients'])->name('clients.residential');
+    });
+    
+    // Business clients - accessible by Administrateur and Préposé aux clients d'affaire
+    Route::middleware(['role:Administrateur,Préposé aux clients d\'affaire'])->group(function () {
+        Route::get('/clients/business', [DashboardController::class, 'showBusinessClients'])->name('clients.business');
+    });
+    
+    // Client resource routes with role-based access
+    Route::resource('client', ClientController::class)->middleware('role:Administrateur,Préposé aux clients résidentiels,Préposé aux clients d\'affaire');
 });
 // Auth::routes();
 

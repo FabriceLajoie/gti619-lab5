@@ -77,4 +77,59 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    /**
+     * Check if user has a specific role.
+     *
+     * @param string $roleName
+     * @return bool
+     */
+    public function hasRole($roleName)
+    {
+        return $this->role && $this->role->name === $roleName;
+    }
+
+    /**
+     * Check if user has any of the specified roles.
+     *
+     * @param array $roles
+     * @return bool
+     */
+    public function hasAnyRole(array $roles)
+    {
+        return $this->role && in_array($this->role->name, $roles);
+    }
+
+    /**
+     * Check if user has a specific permission.
+     *
+     * @param string $permission
+     * @return bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->role && $this->role->hasPermission($permission);
+    }
+
+    /**
+     * Check if user can access a specific resource with an action.
+     *
+     * @param string $resource
+     * @param string $action
+     * @return bool
+     */
+    public function canAccess($resource, $action)
+    {
+        return $this->role && $this->role->hasPermissionFor($resource, $action);
+    }
+
+    /**
+     * Get all permissions for this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getPermissions()
+    {
+        return $this->role ? $this->role->permissions : collect();
+    }
 }

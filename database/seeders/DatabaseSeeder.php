@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Services\PBKDF2PasswordHasher;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +17,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // Initialize PBKDF2 password hasher
+        $passwordHasher = new PBKDF2PasswordHasher();
+        
         // Create roles
         $adminRole = Role::firstOrCreate(
             ['name' => 'Administrateur'],
@@ -23,8 +27,8 @@ class DatabaseSeeder extends Seeder
         );
 
         $residentRole = Role::firstOrCreate(
-            ['name' => 'Préposé aux client résidentiels'],
-            ['description' => 'Préposé aux client résidentiels']
+            ['name' => 'Préposé aux clients résidentiels'],
+            ['description' => 'Préposé aux clients résidentiels']
         );
 
         $businessRole = Role::firstOrCreate(
@@ -32,33 +36,39 @@ class DatabaseSeeder extends Seeder
             ['description' => "Préposé aux clients d'affaire"]
         );
 
-        // Create users and attach roles
+        // Create users with PBKDF2 hashed passwords
+        $adminHashData = $passwordHasher->hash('password');
         $admin = User::firstOrCreate(
             ['email' => 'admin@ets.com'],
             [
                 'name' => 'Administrateur',
-                'password' => Hash::make('password')
+                'password' => $adminHashData['hash'],
+                'password_salt' => $adminHashData['salt'],
+                'role_id' => $adminRole->id
             ]
         );
-        $admin->roles()->syncWithoutDetaching([$adminRole->id]);
 
+        $util1HashData = $passwordHasher->hash('password');
         $util1 = User::firstOrCreate(
             ['email' => 'utilisateur1@ets.com'],
             [
                 'name' => 'Utilisateur1',
-                'password' => Hash::make('password')
+                'password' => $util1HashData['hash'],
+                'password_salt' => $util1HashData['salt'],
+                'role_id' => $residentRole->id
             ]
         );
-        $util1->roles()->syncWithoutDetaching([$residentRole->id]);
 
+        $util2HashData = $passwordHasher->hash('password');
         $util2 = User::firstOrCreate(
             ['email' => 'utilisateur2@ets.com'],
             [
                 'name' => 'Utilisateur2',
-                'password' => Hash::make('password')
+                'password' => $util2HashData['hash'],
+                'password_salt' => $util2HashData['salt'],
+                'role_id' => $businessRole->id
             ]
         );
-        $util2->roles()->syncWithoutDetaching([$businessRole->id]);
 
         // Seed clients
         $this->call(ClientSeeder::class);

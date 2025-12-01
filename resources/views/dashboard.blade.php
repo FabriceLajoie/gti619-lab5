@@ -117,23 +117,42 @@
         <h2>Bienvenue au tableau de bord</h2>
         
         <div class="dashboard-grid">
-            <div class="card">
-                <h3>Paramètres</h3>
-                <p>Gérez vos paramètres de compte et les préférences de l'application.</p>
-                <a href="{{ route('settings') }}">Accéder</a>
-            </div>
-            
-            <div class="card">
-                <h3>Clients résidentiels</h3>
-                <p>Consultez et gérez la liste des clients résidentiels.</p>
-                <a href="{{ route('clients.residential') }}">Accéder</a>
-            </div>
-            
-            <div class="card">
-                <h3>Clients d'affaires</h3>
-                <p>Consultez et gérez la liste des clients d'affaires.</p>
-                <a href="{{ route('clients.business') }}">Accéder</a>
-            </div>
+            @if(Auth::user()->hasRole('Administrateur'))
+                <div class="card">
+                    <h3>Paramètres</h3>
+                    <p>Gérez vos paramètres de compte et les préférences de l'application.</p>
+                    <a href="{{ route('settings') }}">Accéder</a>
+                </div>
+                
+                <div class="card">
+                    <h3>Clients résidentiels</h3>
+                    <p>Consultez et gérez la liste des clients résidentiels.</p>
+                    <a href="{{ route('clients.residential') }}">Accéder</a>
+                </div>
+                
+                <div class="card">
+                    <h3>Clients d'affaires</h3>
+                    <p>Consultez et gérez la liste des clients d'affaires.</p>
+                    <a href="{{ route('clients.business') }}">Accéder</a>
+                </div>
+            @elseif(Auth::user()->hasRole('Préposé aux clients résidentiels'))
+                <div class="card">
+                    <h3>Clients résidentiels</h3>
+                    <p>Consultez et gérez la liste des clients résidentiels.</p>
+                    <a href="{{ route('clients.residential') }}">Accéder</a>
+                </div>
+            @elseif(Auth::user()->hasRole('Préposé aux clients d\'affaire'))
+                <div class="card">
+                    <h3>Clients d'affaires</h3>
+                    <p>Consultez et gérez la liste des clients d'affaires.</p>
+                    <a href="{{ route('clients.business') }}">Accéder</a>
+                </div>
+            @else
+                <div class="card">
+                    <h3>Accès limité</h3>
+                    <p>Votre compte n'a pas de rôle assigné. Contactez l'administrateur.</p>
+                </div>
+            @endif
         </div>
     </div>
 </body>
