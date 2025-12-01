@@ -147,15 +147,29 @@ class AuditLogger
      * Log security configuration change
      *
      * @param int $userId
-     * @param array $changes
+     * @param array $oldConfig
+     * @param array $newConfig
      * @param Request|null $request
+     * @param string|null $message
      * @return AuditLog
      */
-    public function logSecurityConfigChange(int $userId, array $changes, ?Request $request = null): AuditLog
+    public function logSecurityConfigChange(int $userId, array $oldConfig, array $newConfig, ?Request $request = null, ?string $message = null): AuditLog
     {
+        // Calculate the actual changes
+        $changes = [];
+        foreach ($newConfig as $key => $newValue) {
+            $oldValue = $oldConfig[$key] ?? null;
+            if ($oldValue !== $newValue) {
+                $changes[$key] = [
+                    'old' => $oldValue,
+                    'new' => $newValue
+                ];
+            }
+        }
+
         return $this->logSecurityEvent('security_config_changed', $userId, [
             'changes' => $changes,
-            'message' => 'Security configuration updated'
+            'message' => $message ?? 'Security configuration updated'
         ], $request);
     }
 

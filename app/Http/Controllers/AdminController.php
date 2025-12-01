@@ -4,19 +4,215 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Models\SecurityConfig;
+use App\Services\SecurityConfigService;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class AdminController extends Controller
 {
+    protected $securityConfigService;
+    protected $auditLogger;
+
     /**
      * Create a new controller instance.
      */
-    public function __construct()
+    public function __construct(SecurityConfigService $securityConfigService, AuditLogger $auditLogger)
     {
         $this->middleware('auth');
         $this->middleware('role:Administrateur');
+        $this->securityConfigService = $securityConfigService;
+        $this->auditLogger = $auditLogger;
+    }
+
+    /**
+     * Show the security configuration page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function securityConfig()
+    {
+        $config = $this->securityConfigService->getConfig();
+        
+        return view('admin.security-config', compact('config'));
+    }
+
+    /**
+     * Update security configuration.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateSecurityConfig(Request $request)
+    {
+        try {
+            $oldConfig = $this->securityConfigService->getConfig()->toArray();
+            $updatedConfig = $this->securityConfigService->updateConfig($request->all());
+            
+            // Log the configuration change
+            $this->auditLogger->logSecurityConfigChange(
+                Auth::id(),
+                $oldConfig,
+                $updatedConfig->toArray(),
+                $request
+            );
+            
+            return redirect()->route('admin.security-config')
+                ->with('success', 'Security configuration updated successfully.');
+                
+        } catch (ValidationException $e) {
+            return redirect()->route('admin.security-config')
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()->route('admin.security-config')
+                ->with('error', 'Failed to update security configuration: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Reset security configuration to defaults.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function resetSecurityConfig(Request $request)
+    {
+        try {
+            $oldConfig = $this->securityConfigService->getConfig()->toArray();
+            $resetConfig = $this->securityConfigService->resetToDefaults();
+            
+            // Log the configuration reset
+            $this->auditLogger->logSecurityConfigChange(
+                Auth::id(),
+                $oldConfig,
+                $resetConfig->toArray(),
+                $request,
+                'Configuration reset to defaults'
+            );
+            
+            return redirect()->route('admin.security-config')
+                ->with('success', 'Security configuration reset to defaults successfully.');
+                
+        } catch (\Exception $e) {
+            return redirect()->route('admin.security-config')
+                ->with('error', 'Failed to reset security configuration: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the users management page.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function users(Request $request)
+    {
+        $query = User::with('role')->orderBy('name');
+
+        // Apply filters
+        if ($request->filled('role_id')) {
+            $query->where('role_id', $request->role_id);
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'locked') {
+                $query->where('locked_until', '>', now());
+            } elseif ($request->status === 'unlocked') {
+                $query->where(function($q) {
+                    $q->whereNull('locked_until')
+                      ->orWhere('locked_until', '<=', now());
+                });
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->paginate(25)->withQueryString();
+
+        // Get filter options
+        $roles = \App\Models\Role::orderBy('name')->get();
+
+        return view('admin.users', compact('users', 'roles'));
+    }
+
+    /**
+     * Show user details.
+     *
+     * @param User $user
+     * @return \Illuminate\View\View
+     */
+    public function userDetails(User $user)
+    {
+        $user->load('role', 'passwordHistories');
+        
+        // Get recent audit logs for this user
+        $recentLogs = AuditLog::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
+        
+        // Get user statistics
+        $stats = [
+            'total_logins' => AuditLog::where('user_id', $user->id)
+                ->where('event_type', 'login_success')
+                ->count(),
+            'failed_attempts' => AuditLog::where('user_id', $user->id)
+                ->where('event_type', 'login_failed')
+                ->count(),
+            'last_login' => AuditLog::where('user_id', $user->id)
+                ->where('event_type', 'login_success')
+                ->latest()
+                ->first(),
+            'password_changes' => AuditLog::where('user_id', $user->id)
+                ->where('event_type', 'password_changed')
+                ->count(),
+        ];
+        
+        return view('admin.user-details', compact('user', 'recentLogs', 'stats'));
+    }
+
+    /**
+     * Unlock a user account.
+     *
+     * @param User $user
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function unlockUser(User $user, Request $request)
+    {
+        try {
+            if (!$user->isLocked()) {
+                return redirect()->back()
+                    ->with('warning', 'User account is not currently locked.');
+            }
+
+            // Unlock the user
+            $user->update([
+                'locked_until' => null,
+                'failed_attempts' => 0
+            ]);
+
+            // Log the unlock action
+            $this->auditLogger->logAccountUnlock($user->id, Auth::id(), $request);
+
+            return redirect()->back()
+                ->with('success', "User {$user->name} has been unlocked successfully.");
+                
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to unlock user: ' . $e->getMessage());
+        }
     }
 
     /**

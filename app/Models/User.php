@@ -132,4 +132,28 @@ class User extends Authenticatable
     {
         return $this->role ? $this->role->permissions : collect();
     }
+
+    /**
+     * Check if the user account is currently locked.
+     *
+     * @return bool
+     */
+    public function isLocked()
+    {
+        return $this->locked_until && $this->locked_until->isFuture();
+    }
+
+    /**
+     * Get the time remaining until the account is unlocked.
+     *
+     * @return string|null
+     */
+    public function getLockTimeRemaining()
+    {
+        if (!$this->isLocked()) {
+            return null;
+        }
+
+        return $this->locked_until->diffForHumans();
+    }
 }

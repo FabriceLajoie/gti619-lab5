@@ -22,11 +22,11 @@ class AdminAuditLogTest extends TestCase
     {
         parent::setUp();
 
-        // Create roles
+        // Créer les rôles
         $this->adminRole = Role::factory()->create(['name' => 'Administrateur']);
         $this->userRole = Role::factory()->create(['name' => 'Préposé aux clients résidentiels']);
 
-        // Create users
+        // Créer les utilisateurs
         $this->adminUser = User::factory()->create(['role_id' => $this->adminRole->id]);
         $this->regularUser = User::factory()->create(['role_id' => $this->userRole->id]);
     }
@@ -52,8 +52,8 @@ class AdminAuditLogTest extends TestCase
         $response = $this->actingAs($this->regularUser)
             ->get(route('admin.audit-logs'));
 
-        $response->assertStatus(302); // Middleware redirects instead of 403
-        $response->assertRedirect(); // Should redirect to appropriate page
+        $response->assertStatus(302); // Le middleware redirige au lieu de retourner 403
+        $response->assertRedirect(); // Devrait rediriger vers la page appropriée
     }
 
     /** @test */
@@ -67,7 +67,7 @@ class AdminAuditLogTest extends TestCase
     /** @test */
     public function admin_can_filter_audit_logs_by_event_type()
     {
-        // Create specific audit logs
+        // Créer des journaux d'audit spécifiques
         $loginSuccess = AuditLog::factory()->loginSuccess()->create();
         $loginFailed = AuditLog::factory()->loginFailed()->create();
         $accountLocked = AuditLog::factory()->accountLocked()->create();
@@ -77,7 +77,7 @@ class AdminAuditLogTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Successful Login');
-        // Verify the filter is applied by checking the selected option
+        // Vérifier que le filtre est appliqué en vérifiant l'option sélectionnée
         $this->assertStringContainsString('login_success" selected', $response->getContent());
     }
 
@@ -101,13 +101,13 @@ class AdminAuditLogTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Test User One');
-        // Verify the filter is applied by checking the selected option
+        // Vérifier que le filtre est appliqué en vérifiant l'option sélectionnée
         $this->assertStringContainsString('value="' . $user1->id . '" selected', $response->getContent());
-        // Ensure only the filtered user's logs are shown in the table
-        // Test User Two should not appear in the table data, only in dropdown options
+        // S'assurer que seuls les journaux de l'utilisateur filtré sont affichés dans le tableau
+        // Test User Two ne devrait pas apparaître dans les données du tableau, seulement dans les options du menu déroulant
         $tableContent = $response->getContent();
         $this->assertStringContainsString('<div class="text-sm font-medium text-gray-900">Test User One</div>', $tableContent);
-        // Make sure Test User Two doesn't appear in the table rows (but can appear in dropdown)
+        // S'assurer que Test User Two n'apparaît pas dans les lignes du tableau (mais peut apparaître dans le menu déroulant)
         $this->assertStringNotContainsString('<div class="text-sm font-medium text-gray-900">Test User Two</div>', $tableContent);
     }
 
@@ -127,7 +127,7 @@ class AdminAuditLogTest extends TestCase
             ]));
 
         $response->assertStatus(200);
-        // Should see the recent log but not the old one
+        // Devrait voir le journal récent mais pas l'ancien
         $response->assertSee($recentLog->formatted_event_type);
     }
 
@@ -173,7 +173,7 @@ class AdminAuditLogTest extends TestCase
         $response = $this->actingAs($this->regularUser)
             ->get(route('admin.audit-log-details', $auditLog));
 
-        $response->assertStatus(302); // Middleware redirects instead of 403
+        $response->assertStatus(302); // Le middleware redirige au lieu de retourner 403
         $response->assertRedirect();
     }
 
@@ -196,7 +196,7 @@ class AdminAuditLogTest extends TestCase
     /** @test */
     public function admin_can_view_audit_statistics()
     {
-        // Create some test data
+        // Créer des données de test
         AuditLog::factory()->loginSuccess()->create(['created_at' => Carbon::today()]);
         AuditLog::factory()->loginFailed()->create(['created_at' => Carbon::today()]);
         AuditLog::factory()->accountLocked()->create(['created_at' => Carbon::today()]);
@@ -209,7 +209,7 @@ class AdminAuditLogTest extends TestCase
         $response->assertViewIs('admin.audit-statistics');
         $response->assertViewHas(['stats', 'authStats', 'highSeverityEvents', 'eventDistribution']);
         
-        // Check that statistics are displayed
+        // Vérifier que les statistiques sont affichées
         $response->assertSee('Total Logs');
         $response->assertSee('Authentication Activity');
         $response->assertSee('High Severity Events');
@@ -221,7 +221,7 @@ class AdminAuditLogTest extends TestCase
         $response = $this->actingAs($this->regularUser)
             ->get(route('admin.audit-statistics'));
 
-        $response->assertStatus(302); // Middleware redirects instead of 403
+        $response->assertStatus(302); // Le middleware redirige au lieu de retourner 403
         $response->assertRedirect();
     }
 
@@ -234,7 +234,7 @@ class AdminAuditLogTest extends TestCase
             ->get(route('admin.audit-logs'));
 
         $response->assertStatus(200);
-        $response->assertSee('Next'); // Pagination link
+        $response->assertSee('Next'); // Lien de pagination
     }
 
     /** @test */
@@ -248,9 +248,9 @@ class AdminAuditLogTest extends TestCase
             ->get(route('admin.audit-logs'));
 
         $response->assertStatus(200);
-        $response->assertSee('text-red-600 bg-red-100'); // High severity CSS
-        $response->assertSee('text-yellow-600 bg-yellow-100'); // Medium severity CSS
-        $response->assertSee('text-green-600 bg-green-100'); // Low severity CSS
+        $response->assertSee('text-red-600 bg-red-100'); // CSS pour sévérité élevée
+        $response->assertSee('text-yellow-600 bg-yellow-100'); // CSS pour sévérité moyenne
+        $response->assertSee('text-green-600 bg-green-100'); // CSS pour sévérité faible
     }
 
     /** @test */
@@ -261,7 +261,7 @@ class AdminAuditLogTest extends TestCase
         $mainLog = AuditLog::factory()->create(['user_id' => $user->id]);
         $relatedLog1 = AuditLog::factory()->create(['user_id' => $user->id]);
         $relatedLog2 = AuditLog::factory()->create(['user_id' => $user->id]);
-        $unrelatedLog = AuditLog::factory()->create(); // Different user
+        $unrelatedLog = AuditLog::factory()->create(); // Utilisateur différent
 
         $response = $this->actingAs($this->adminUser)
             ->get(route('admin.audit-log-details', $mainLog));

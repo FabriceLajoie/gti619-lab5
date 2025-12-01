@@ -45,8 +45,20 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                         <li><a class="dropdown-item" href="{{ route('settings') }}">Settings</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('admin.audit-logs') }}">Audit Logs</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('admin.audit-statistics') }}">Audit Statistics</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.security-config') }}">
+                                            <i class="fas fa-shield-alt me-2"></i>Security Configuration
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.users') }}">
+                                            <i class="fas fa-users me-2"></i>User Management
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.audit-logs') }}">
+                                            <i class="fas fa-list me-2"></i>Audit Logs
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.audit-statistics') }}">
+                                            <i class="fas fa-chart-bar me-2"></i>Audit Statistics
+                                        </a></li>
                                     </ul>
                                 </li>
                             @endif

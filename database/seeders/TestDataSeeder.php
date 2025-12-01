@@ -19,21 +19,21 @@ class TestDataSeeder extends Seeder
     {
         $passwordHasher = new PBKDF2PasswordHasher();
 
-        // Create roles
-        $adminRole = Role::create([
-            'name' => 'Administrateur',
-            'description' => 'Administrator with full access'
-        ]);
+        // Create roles (use firstOrCreate to avoid duplicates)
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'Administrateur'],
+            ['description' => 'Administrator with full access']
+        );
 
-        $residentialRole = Role::create([
-            'name' => 'Préposé aux clients résidentiels',
-            'description' => 'Residential client manager'
-        ]);
+        $residentialRole = Role::firstOrCreate(
+            ['name' => 'Préposé aux clients résidentiels'],
+            ['description' => 'Residential client manager']
+        );
 
-        $businessRole = Role::create([
-            'name' => 'Préposé aux clients d\'affaire',
-            'description' => 'Business client manager'
-        ]);
+        $businessRole = Role::firstOrCreate(
+            ['name' => 'Préposé aux clients d\'affaire'],
+            ['description' => 'Business client manager']
+        );
 
         // Create permissions
         $permissions = [

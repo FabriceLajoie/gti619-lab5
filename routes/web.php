@@ -35,6 +35,16 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Administrateur'])->group(function () {
         Route::get('/settings', [DashboardController::class, 'showSettings'])->name('settings');
         
+        // Security configuration routes
+        Route::get('/admin/security-config', [AdminController::class, 'securityConfig'])->name('admin.security-config');
+        Route::post('/admin/security-config', [AdminController::class, 'updateSecurityConfig'])->name('admin.security-config.update');
+        Route::post('/admin/security-config/reset', [AdminController::class, 'resetSecurityConfig'])->name('admin.security-config.reset');
+        
+        // User management routes
+        Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::post('/admin/users/{user}/unlock', [AdminController::class, 'unlockUser'])->name('admin.users.unlock');
+        Route::get('/admin/users/{user}', [AdminController::class, 'userDetails'])->name('admin.users.details');
+        
         // Audit logging routes
         Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.audit-logs');
         Route::get('/admin/audit-logs/{auditLog}', [AdminController::class, 'auditLogDetails'])->name('admin.audit-log-details');

@@ -69,51 +69,29 @@
             color: #333;
         }
         
-        .settings-box {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+
         
-        .setting-item {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .setting-item:last-child {
-            border-bottom: none;
-        }
-        
-        .setting-item h3 {
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #333;
-        }
-        
-        .setting-item p {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .audit-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
+        .admin-link {
+            display: block;
+            padding: 12px 15px;
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 4px;
-            color: #2196F3 !important;
+            color: #333 !important;
             text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            margin-bottom: 10px;
         }
         
-        .audit-link:hover {
+        .admin-link:hover {
             background-color: #e9ecef;
             border-color: #2196F3;
+        }
+        
+        .admin-link strong {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
         }
     </style>
 </head>
@@ -131,35 +109,25 @@
 
     <div class="container">
         @if(auth()->user()->role->name === 'Administrateur')
-            <div style="margin-bottom: 20px;">
-                <a href="{{ route('admin.audit-logs') }}" class="audit-link">
-                    Consulter les journaux d'audit
-                </a>
+            <div class="admin-section" style="margin-bottom: 30px;">
+                <h2 style="color: #333; margin-bottom: 15px; font-size: 18px;">Administration</h2>
+                <div class="admin-links">
+                    <a href="{{ route('admin.security-config') }}" class="admin-link">
+                        <strong>Configuration de sécurité</strong>
+                    </a>
+                    <a href="{{ route('admin.users') }}" class="admin-link">
+                        <strong>Gestion des utilisateurs</strong>
+                    </a>
+                    <a href="{{ route('admin.audit-logs') }}" class="admin-link">
+                        <strong>Journaux d'audit</strong>
+                    </a>
+                    <a href="{{ route('admin.audit-statistics') }}" class="admin-link">
+                        <strong>Statistiques d'audit</strong>
+                    </a>
+                </div>
             </div>
         @endif
-        
-        <div class="settings-box">
-            <div class="setting-item">
-                <h3>Profil</h3>
-                <p>Gérez vos informations de profil et vos préférences personnelles.</p>
-            </div>
-            
-            <div class="setting-item">
-                <h3>Sécurité</h3>
-                <p>Modifiez votre mot de passe et gérez les paramètres de sécurité de votre compte.</p>
 
-            </div>
-            
-            <div class="setting-item">
-                <h3>Notifications</h3>
-                <p>Configurez les préférences de notifications de l'application.</p>
-            </div>
-            
-            <div class="setting-item">
-                <h3>À propos</h3>
-                <p>Version 1.0 - Système de gestion des clients</p>
-            </div>
-        </div>
     </div>
 </body>
 </html>

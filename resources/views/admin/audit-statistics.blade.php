@@ -3,8 +3,8 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Audit Statistics</h1>
-        <p class="text-gray-600 mt-2">Security monitoring and audit log analytics</p>
+        <h1 class="text-3xl font-bold text-gray-900">Statistiques d'audit</h1>
+        <p class="text-gray-600 mt-2">Surveillance de la sécurité et analyse des journaux d'audit</p>
     </div>
 
     <!-- Statistics Cards -->
@@ -17,7 +17,7 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Logs</p>
+                    <p class="text-sm font-medium text-gray-500">Total des journaux</p>
                     <p class="text-2xl font-semibold text-gray-900">{{ number_format($stats['total_logs']) }}</p>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Today</p>
+                    <p class="text-sm font-medium text-gray-500">Aujourd'hui</p>
                     <p class="text-2xl font-semibold text-gray-900">{{ number_format($stats['logs_today']) }}</p>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">This Week</p>
+                    <p class="text-sm font-medium text-gray-500">Cette semaine</p>
                     <p class="text-2xl font-semibold text-gray-900">{{ number_format($stats['logs_this_week']) }}</p>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">This Month</p>
+                    <p class="text-sm font-medium text-gray-500">Ce mois-ci</p>
                     <p class="text-2xl font-semibold text-gray-900">{{ number_format($stats['logs_this_month']) }}</p>
                 </div>
             </div>
@@ -69,26 +69,26 @@
     <!-- Authentication Statistics -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Authentication Activity (Today)</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Activité d'authentification (Aujourd'hui)</h3>
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                        <span class="text-sm text-gray-700">Successful Logins</span>
+                        <span class="text-sm text-gray-700">Connexions réussies</span>
                     </div>
                     <span class="text-sm font-semibold text-gray-900">{{ $authStats['successful_logins_today'] }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
-                        <span class="text-sm text-gray-700">Failed Logins</span>
+                        <span class="text-sm text-gray-700">Connexions échouées</span>
                     </div>
                     <span class="text-sm font-semibold text-gray-900">{{ $authStats['failed_logins_today'] }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
-                        <span class="text-sm text-gray-700">Locked Accounts</span>
+                        <span class="text-sm text-gray-700">Comptes verrouillés</span>
                     </div>
                     <span class="text-sm font-semibold text-gray-900">{{ $authStats['locked_accounts_today'] }}</span>
                 </div>
@@ -96,7 +96,7 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Event Distribution (Last 30 Days)</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribution des événements (30 derniers jours)</h3>
             <div class="space-y-2">
                 @foreach($eventDistribution->take(5) as $event)
                     <div class="flex items-center justify-between">
@@ -111,16 +111,16 @@
     <!-- High Severity Events -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
         <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Recent High Severity Events</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Événements récents de gravité élevée</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Time</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Événement</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse IP</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Heure</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -149,13 +149,13 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="{{ route('admin.audit-log-details', $event) }}" 
-                                   class="text-blue-600 hover:text-blue-900">View Details</a>
+                                   class="text-blue-600 hover:text-blue-900">Voir les détails</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                No high severity events found recently.
+                                Aucun événement de gravité élevée trouvé récemment.
                             </td>
                         </tr>
                     @endforelse
@@ -168,11 +168,11 @@
     <div class="flex space-x-4">
         <a href="{{ route('admin.audit-logs') }}" 
            class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            View All Audit Logs
+            Voir tous les journaux d'audit
         </a>
         <a href="{{ route('admin.audit-logs.export') }}" 
            class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-            Export Recent Logs
+            Exporter les journaux récents
         </a>
     </div>
 </div>
