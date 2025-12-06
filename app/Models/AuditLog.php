@@ -11,7 +11,7 @@ class AuditLog extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable
+     * Les attributs qui sont assignables en masse
      *
      * @var array
      */
@@ -24,7 +24,7 @@ class AuditLog extends Model
     ];
 
     /**
-     * The attributes that should be cast to native types
+     * Les attributs qui doivent être convertis en types natifs
      *
      * @var array
      */
@@ -35,7 +35,7 @@ class AuditLog extends Model
     ];
 
     /**
-     * Get the user associated with this audit log entry
+     * Obtenir l'utilisateur associé à cette entrée de journal d'audit
      */
     public function user(): BelongsTo
     {
@@ -43,7 +43,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to filter by event type
+     * Portée pour filtrer par type d'événement
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $eventType
@@ -55,7 +55,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to filter by user
+     * Portée pour filtrer par utilisateur
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $userId
@@ -67,7 +67,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope to filter by date range
+     * Portée pour filtrer par plage de dates
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $startDate
@@ -80,7 +80,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope for recent logs
+     * Portée pour les journaux récents
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $days
@@ -92,7 +92,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope for authentication-related logs
+     * Portée pour les journaux liés à l'authentification
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -109,7 +109,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Scope for security-related logs
+     * Portée pour les journaux liés à la sécurité
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -127,7 +127,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Get formatted event type for display
+     * Obtenir le type d'événement formaté pour l'affichage
      *
      * @return string
      */
@@ -154,7 +154,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Get the severity level
+     * Obtenir le niveau de sévérité
      *
      * @return string
      */
@@ -185,7 +185,7 @@ class AuditLog extends Model
     }
 
     /**
-     * Get the CSS class for the severity leve
+     * Obtenir la classe CSS pour le niveau de sévérité
      *
      * @return string
      */

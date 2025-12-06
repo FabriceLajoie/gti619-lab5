@@ -7,7 +7,7 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 class Authenticate extends Middleware
 {
     /**
-     * Get the path the user for redirect to when they are not authenticated
+     * Obtenir le chemin de redirection pour l'utilisateur lorsqu'il n'est pas authentifié
      *
      * @param  \Illuminate\Http\Request  $request
      * @return string|null

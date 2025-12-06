@@ -17,7 +17,7 @@ class PBKDF2UserProvider extends EloquentUserProvider
     }
 
     /**
-     * Validate a user with credentials
+     * Valider un utilisateur avec des identifiants
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  array  $credentials
@@ -27,7 +27,7 @@ class PBKDF2UserProvider extends EloquentUserProvider
     {
         $plain = $credentials['password'];
 
-        // Use PBKDF2 password verification
+        // Utiliser la vérification de mot de passe PBKDF2
         return $this->passwordHasher->verify(
             $plain,
             $user->password_salt,

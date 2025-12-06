@@ -7,29 +7,29 @@ use Exception;
 class PBKDF2PasswordHasher
 {
     /**
-     * Default number of iterations for PBKDF2
+     * Nombre d'itérations par défaut pour PBKDF2
      */
     private int $iterations;
     
     /**
-     * Salt length in bytes (32 bytes = 256 bits)
+     * Longueur du sel en octets (32 octets = 256 bits)
      */
     private int $saltLength = 32;
     
     /**
-     * Hash output length in bytes (64 bytes = 512 bits)
+     * Longueur de sortie du hachage en octets (64 octets = 512 bits)
      */
     private int $hashLength = 64;
     
     /**
-     * Hash algorithm to use
+     * Algorithme de hachage à utiliser
      */
     private string $algorithm = 'sha256';
     
     /**
-     * Constructor
+     * Constructeur
      * 
-     * @param int $iterations Number of PBKDF2 iterations (default: 100,000)
+     * @param int $iterations Nombre d'itérations PBKDF2 (défaut: 100 000)
      */
     public function __construct(int $iterations = 100000)
     {
@@ -37,18 +37,18 @@ class PBKDF2PasswordHasher
     }
     
     /**
-     * Hash a password using PBKDF2
+     * Hacher un mot de passe en utilisant PBKDF2
      * 
-     * @param string $password The plain text password to hash
-     * @return array Array containing salt, hash, and iterations
-     * @throws Exception If random bytes generation fails
+     * @param string $password Le mot de passe en texte clair à hacher
+     * @return array Tableau contenant le sel, le hachage et les itérations
+     * @throws Exception Si la génération d'octets aléatoires échoue
      */
     public function hash(string $password): array
     {
-        // Generate cryptographically secure salt
+        // Générer un sel cryptographiquement sécurisé
         $salt = $this->generateSalt();
         
-        // Apply PBKDF2 with multiple iterations
+        // Appliquer PBKDF2 avec plusieurs itérations
         $hash = $this->pbkdf2($password, $salt, $this->iterations);
         
         return [
@@ -60,62 +60,62 @@ class PBKDF2PasswordHasher
     }
     
     /**
-     * Verify a password against stored hash data
+     * Vérifier un mot de passe contre les données de hachage stockées
      * 
-     * @param string $password The plain text password to verify
-     * @param string $storedSalt Base64 encoded salt
-     * @param string $storedHash Base64 encoded hash
-     * @param int $iterations Number of iterations used for the stored hash
-     * @return bool True if password matches, false otherwise
+     * @param string $password Le mot de passe en texte clair à vérifier
+     * @param string $storedSalt Sel encodé en Base64
+     * @param string $storedHash Hachage encodé en Base64
+     * @param int $iterations Nombre d'itérations utilisées pour le hachage stocké
+     * @return bool Vrai si le mot de passe correspond, faux sinon
      */
     public function verify(string $password, string $storedSalt, string $storedHash, int $iterations): bool
     {
         try {
-            // Decode stored salt and hash
+            // Décoder le sel et le hachage stockés
             $salt = base64_decode($storedSalt, true);
             $expectedHash = base64_decode($storedHash, true);
             
-            // Validate decoded data
+            // Valider les données décodées
             if ($salt === false || $expectedHash === false) {
                 return false;
             }
             
-            // Recompute hash with same parameters
+            // Recalculer le hachage avec les mêmes paramètres
             $computedHash = $this->pbkdf2($password, $salt, $iterations);
             
-            // Timing-safe comparison to prevent timing attacks
+            // Comparaison sécurisée temporellement pour prévenir les attaques de timing
             return hash_equals($expectedHash, $computedHash);
             
         } catch (Exception $e) {
-            // Log error in production, return false for security
+            // Enregistrer l'erreur en production, retourner faux pour la sécurité
             return false;
         }
     }
     
     /**
-     * Generate secure salt
+     * Générer un sel sécurisé
      * 
-     * @return string Raw binary salt
-     * @throws Exception If random bytes generation fails
+     * @return string Sel binaire brut
+     * @throws Exception Si la génération d'octets aléatoires échoue
      */
     private function generateSalt(): string
     {
         $salt = random_bytes($this->saltLength);
         
         if ($salt === false || strlen($salt) !== $this->saltLength) {
-            throw new Exception('Failed to generate secure salt');
+            throw new Exception('Échec de la génération d\'un sel sécurisé');
         }
         
         return $salt;
     }
     
     /**
-     * Apply PBKDF2 key derivation function
+     * Appliquer la fonction de dérivation de clé PBKDF2
      * 
-     * @param string $password The password to hash
-     * @param string $salt The salt to use
-     * @param int $iterations Number of iterations
-     * @return string Raw binary hash
+     * @param string $password Le mot de passe à hacher
+     * @param string $salt Le sel à utiliser
+     * @param int $iterations Nombre d'itérations
+     * @return string Hachage binaire brut
      */
     private function pbkdf2(string $password, string $salt, int $iterations): string
     {
@@ -125,14 +125,14 @@ class PBKDF2PasswordHasher
             $salt,
             $iterations,
             $this->hashLength,
-            true // Return raw binary data
+            true // Retourner des données binaires brutes
         );
     }
     
     /**
-     * Get current configuration
+     * Obtenir la configuration actuelle
      * 
-     * @return array Configuration parameters
+     * @return array Paramètres de configuration
      */
     public function getConfig(): array
     {
@@ -145,15 +145,15 @@ class PBKDF2PasswordHasher
     }
     
     /**
-     * Set number of iterations
+     * Définir le nombre d'itérations
      * 
-     * @param int $iterations Number of iterations (minimum 10,000)
-     * @throws Exception If iterations is too low
+     * @param int $iterations Nombre d'itérations (minimum 10 000)
+     * @throws Exception Si le nombre d'itérations est trop faible
      */
     public function setIterations(int $iterations): void
     {
         if ($iterations < 10000) {
-            throw new Exception('Iterations must be at least 10,000 for security');
+            throw new Exception('Les itérations doivent être d\'au moins 10 000 pour la sécurité');
         }
         
         $this->iterations = $iterations;

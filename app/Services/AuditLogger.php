@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class AuditLogger
 {
     /**
-     * Log a general security event
+     * Enregistrer un événement de sécurité général
      *
      * @param string $eventType
      * @param int|null $userId
@@ -31,7 +31,7 @@ class AuditLogger
     }
 
     /**
-     * Log successful authentication attempt
+     * Enregistrer une tentative d'authentification réussie
      *
      * @param int $userId
      * @param Request|null $request
@@ -40,12 +40,12 @@ class AuditLogger
     public function logSuccessfulAuthentication(int $userId, ?Request $request = null): AuditLog
     {
         return $this->logSecurityEvent('login_success', $userId, [
-            'message' => 'User successfully authenticated'
+            'message' => 'Utilisateur authentifié avec succès'
         ], $request);
     }
 
     /**
-     * Log failed authentication attempt
+     * Enregistrer une tentative d'authentification échouée
      *
      * @param string $email
      * @param Request|null $request
@@ -55,12 +55,12 @@ class AuditLogger
     {
         return $this->logSecurityEvent('login_failed', null, [
             'email' => $email,
-            'message' => 'Failed authentication attempt'
+            'message' => 'Tentative d\'authentification échouée'
         ], $request);
     }
 
     /**
-     * Log account lockout event
+     * Enregistrer un événement de verrouillage de compte
      *
      * @param int $userId
      * @param int $failedAttempts
@@ -71,12 +71,12 @@ class AuditLogger
     {
         return $this->logSecurityEvent('account_locked', $userId, [
             'failed_attempts' => $failedAttempts,
-            'message' => 'Account locked due to excessive failed login attempts'
+            'message' => 'Compte verrouillé en raison de tentatives de connexion échouées excessives'
         ], $request);
     }
 
     /**
-     * Log account unlock event
+     * Enregistrer un événement de déverrouillage de compte
      *
      * @param int $userId
      * @param int $unlockedByUserId
@@ -87,12 +87,12 @@ class AuditLogger
     {
         return $this->logSecurityEvent('account_unlocked', $userId, [
             'unlocked_by_user_id' => $unlockedByUserId,
-            'message' => 'Account unlocked by administrator'
+            'message' => 'Compte déverrouillé par l\'administrateur'
         ], $request);
     }
 
     /**
-     * Log password change event
+     * Enregistrer un événement de changement de mot de passe
      *
      * @param int $userId
      * @param bool $forced
@@ -103,12 +103,12 @@ class AuditLogger
     {
         return $this->logSecurityEvent('password_changed', $userId, [
             'forced' => $forced,
-            'message' => $forced ? 'Password changed (forced)' : 'Password changed by user'
+            'message' => $forced ? 'Mot de passe changé (forcé)' : 'Mot de passe changé par l\'utilisateur'
         ], $request);
     }
 
     /**
-     * Log password policy violation
+     * Enregistrer une violation de politique de mot de passe
      *
      * @param int $userId
      * @param array $violations
@@ -119,12 +119,12 @@ class AuditLogger
     {
         return $this->logSecurityEvent('password_policy_violation', $userId, [
             'violations' => $violations,
-            'message' => 'Password policy violation detected'
+            'message' => 'Violation de politique de mot de passe détectée'
         ], $request);
     }
 
     /**
-     * Log role change event
+     * Enregistrer un événement de changement de rôle
      *
      * @param int $userId
      * @param string $oldRole
@@ -139,12 +139,12 @@ class AuditLogger
             'old_role' => $oldRole,
             'new_role' => $newRole,
             'changed_by_user_id' => $changedByUserId,
-            'message' => "Role changed from {$oldRole} to {$newRole}"
+            'message' => "Rôle changé de {$oldRole} à {$newRole}"
         ], $request);
     }
 
     /**
-     * Log security configuration change
+     * Enregistrer un changement de configuration de sécurité
      *
      * @param int $userId
      * @param array $oldConfig
@@ -155,7 +155,7 @@ class AuditLogger
      */
     public function logSecurityConfigChange(int $userId, array $oldConfig, array $newConfig, ?Request $request = null, ?string $message = null): AuditLog
     {
-        // Calculate actual changes
+        // Calculer les changements réels
         $changes = [];
         foreach ($newConfig as $key => $newValue) {
             $oldValue = $oldConfig[$key] ?? null;
@@ -169,12 +169,12 @@ class AuditLogger
 
         return $this->logSecurityEvent('security_config_changed', $userId, [
             'changes' => $changes,
-            'message' => $message ?? 'Security configuration updated'
+            'message' => $message ?? 'Configuration de sécurité mise à jour'
         ], $request);
     }
 
     /**
-     * Log unauthorized access attempt
+     * Enregistrer une tentative d'accès non autorisé
      *
      * @param string $resource
      * @param string $action
@@ -187,12 +187,12 @@ class AuditLogger
         return $this->logSecurityEvent('unauthorized_access', $userId, [
             'resource' => $resource,
             'action' => $action,
-            'message' => "Unauthorized access attempt to {$resource}:{$action}"
+            'message' => "Tentative d'accès non autorisé à {$resource}:{$action}"
         ], $request);
     }
 
     /**
-     * Log user creation event
+     * Enregistrer un événement de création d'utilisateur
      *
      * @param int $newUserId
      * @param int $createdByUserId
@@ -205,12 +205,12 @@ class AuditLogger
         return $this->logSecurityEvent('user_created', $newUserId, [
             'created_by_user_id' => $createdByUserId,
             'role' => $role,
-            'message' => "New user created with role: {$role}"
+            'message' => "Nouvel utilisateur créé avec le rôle: {$role}"
         ], $request);
     }
 
     /**
-     * Log session-related security events
+     * Enregistrer les événements de sécurité liés aux sessions
      *
      * @param string $sessionEvent
      * @param int|null $userId
@@ -221,7 +221,7 @@ class AuditLogger
     public function logSessionEvent(string $sessionEvent, ?int $userId = null, array $details = [], ?Request $request = null): AuditLog
     {
         return $this->logSecurityEvent("session_{$sessionEvent}", $userId, array_merge([
-            'message' => "Session event: {$sessionEvent}"
+            'message' => "Événement de session: {$sessionEvent}"
         ], $details), $request);
     }
 }

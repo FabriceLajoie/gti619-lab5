@@ -12,10 +12,3 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-.kiro/specs/gti619-lab5-security/design.md
-.kiro/specs/gti619-lab5-security/requirements.md
-.kiro/specs/gti619-lab5-security/tasks.md
-.gitignore
-public/DGithubgti619-lab5storagelogs/laravel.log
-public/DGithubgti619-lab5storageframework/cache/data/16/95/1695ad5655cc7cfbd299f85c23cf2203ed775752
-public/DGithubgti619-lab5storageframework/cache/data/1a/87/1a87996875ce7b39058aff5facf13f33bea26f1e

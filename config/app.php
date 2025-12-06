@@ -58,6 +58,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Forcer HTTPS
+    |--------------------------------------------------------------------------
+    |
+    | Lorsqu'activé, l'application forcera HTTPS pour toutes les requêtes.
+    | Ceci est automatiquement activé dans les environnements de production.
+    |
+    */
+
+    'force_https' => env('FORCE_HTTPS', env('APP_ENV') === 'production'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

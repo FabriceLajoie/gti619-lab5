@@ -52,7 +52,7 @@ class SecurityConfig extends Model
     ];
 
     /**
-     * get singleton security configuration instance
+     * Obtenir l'instance singleton de configuration de sécurité
      */
     public static function getInstance()
     {
@@ -60,13 +60,13 @@ class SecurityConfig extends Model
     }
 
     /**
-     * Validation rules for security configuration
+     * Règles de validation pour la configuration de sécurité
      */
     public static function validationRules()
     {
         return [
             'max_login_attempts' => 'sometimes|integer|min:1|max:20',
-            'lockout_duration_minutes' => 'sometimes|integer|min:1|max:1440', // Max 24 hours
+            'lockout_duration_minutes' => 'sometimes|integer|min:1|max:1440', // Maximum 24 heures
             'password_min_length' => 'sometimes|integer|min:8|max:128',
             'password_require_uppercase' => 'sometimes|boolean',
             'password_require_lowercase' => 'sometimes|boolean',
@@ -80,23 +80,23 @@ class SecurityConfig extends Model
     }
 
     /**
-     * Get valid messages
+     * Obtenir les messages de validation
      */
     public static function validationMessages()
     {
         return [
-            'max_login_attempts.min' => 'Maximum login attempts must be at least 1',
-            'max_login_attempts.max' => 'Maximum login attempts cannot exceed 20',
-            'lockout_duration_minutes.min' => 'Lockout duration must be at least 1 minute',
-            'lockout_duration_minutes.max' => 'Lockout duration cannot exceed 24 hours',
-            'password_min_length.min' => 'Password minimum length must be at least 8 characters',
-            'password_min_length.max' => 'Password minimum length cannot exceed 128 characters',
-            'password_history_count.max' => 'Password history count cannot exceed 50',
-            'password_expiry_days.max' => 'Password expiry cannot exceed 365 days',
-            'pbkdf2_iterations.min' => 'PBKDF2 iterations must be at least 10,000 for security',
-            'pbkdf2_iterations.max' => 'PBKDF2 iterations cannot exceed 1,000,000 for performance',
-            'session_timeout_minutes.min' => 'Session timeout must be at least 5 minutes',
-            'session_timeout_minutes.max' => 'Session timeout cannot exceed 24 hours'
+            'max_login_attempts.min' => 'Le nombre maximum de tentatives de connexion doit être d\'au moins 1',
+            'max_login_attempts.max' => 'Le nombre maximum de tentatives de connexion ne peut pas dépasser 20',
+            'lockout_duration_minutes.min' => 'La durée de verrouillage doit être d\'au moins 1 minute',
+            'lockout_duration_minutes.max' => 'La durée de verrouillage ne peut pas dépasser 24 heures',
+            'password_min_length.min' => 'La longueur minimale du mot de passe doit être d\'au moins 8 caractères',
+            'password_min_length.max' => 'La longueur minimale du mot de passe ne peut pas dépasser 128 caractères',
+            'password_history_count.max' => 'Le nombre d\'historique de mots de passe ne peut pas dépasser 50',
+            'password_expiry_days.max' => 'L\'expiration du mot de passe ne peut pas dépasser 365 jours',
+            'pbkdf2_iterations.min' => 'Les itérations PBKDF2 doivent être d\'au moins 10 000 pour la sécurité',
+            'pbkdf2_iterations.max' => 'Les itérations PBKDF2 ne peuvent pas dépasser 1 000 000 pour les performances',
+            'session_timeout_minutes.min' => 'Le délai d\'expiration de session doit être d\'au moins 5 minutes',
+            'session_timeout_minutes.max' => 'Le délai d\'expiration de session ne peut pas dépasser 24 heures'
         ];
     }
 }

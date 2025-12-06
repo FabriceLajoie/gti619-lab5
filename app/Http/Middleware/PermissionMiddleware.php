@@ -20,7 +20,7 @@ class PermissionMiddleware
     }
 
     /**
-     * Handle an incoming request
+     * Gérer une requête entrante
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
@@ -29,19 +29,19 @@ class PermissionMiddleware
      */
     public function handle(Request $request, Closure $next, ...$permissions)
     {
-        // Check if user is authenticated
+        // Vérifier si l'utilisateur est authentifié
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
         
-        // Load user's role and permissions if not already loaded
+        // Charger le rôle et les permissions de l'utilisateur s'ils ne sont pas déjà chargés
         if (!$user->relationLoaded('role')) {
             $user->load('role.permissions');
         }
 
-        // Check if user has role assigned
+        // Vérifier si l'utilisateur a un rôle assigné
         if (!$user->role) {
             $this->auditLogger->logSecurityEvent('unauthorized_access_no_role', $user->id, [
                 'route' => $request->route()->getName(),
@@ -52,7 +52,7 @@ class PermissionMiddleware
             return redirect()->route('dashboard')->with('error', 'Access denied: No role assigned.');
         }
 
-        // Check if user has any of the required permissions
+        // Vérifier si l'utilisateur a l'une des permissions requises
         $hasPermission = false;
         foreach ($permissions as $permission) {
             if ($this->permissionService->userHasPermission($user, $permission)) {
@@ -70,12 +70,12 @@ class PermissionMiddleware
                 'url' => $request->url()
             ]);
 
-            // Redirect based on user's role to appropriate page
+            // Rediriger selon le rôle de l'utilisateur vers la page appropriée
             $redirectRoute = $this->getRedirectRouteForRole($user->role->name);
-            return redirect()->route($redirectRoute)->with('error', 'Access denied: Insufficient permissions.');
+            return redirect()->route($redirectRoute)->with('error', 'Accès refusé: Permissions insuffisantes.');
         }
 
-        // Log access
+        // Enregistrer l'accès
         $this->auditLogger->logSecurityEvent('authorized_access', $user->id, [
             'user_role' => $user->role->name,
             'route' => $request->route()->getName(),
@@ -87,7 +87,7 @@ class PermissionMiddleware
     }
 
     /**
-     * Get appropriate redirect route based on user's role
+     * Obtenir la route de redirection appropriée selon le rôle de l'utilisateur
      *
      * @param string $role
      * @return string

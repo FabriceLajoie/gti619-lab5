@@ -61,7 +61,7 @@ class AuditLoggerTest extends TestCase
 
         $this->assertEquals('login_success', $auditLog->event_type);
         $this->assertEquals($this->user->id, $auditLog->user_id);
-        $this->assertEquals('User successfully authenticated', $auditLog->details['message']);
+        $this->assertEquals('Utilisateur authentifié avec succès', $auditLog->details['message']);
 
         $this->assertDatabaseHas('audit_logs', [
             'event_type' => 'login_success',
@@ -81,7 +81,7 @@ class AuditLoggerTest extends TestCase
         $this->assertEquals('login_failed', $auditLog->event_type);
         $this->assertNull($auditLog->user_id);
         $this->assertEquals($email, $auditLog->details['email']);
-        $this->assertEquals('Failed authentication attempt', $auditLog->details['message']);
+        $this->assertEquals('Tentative d\'authentification échouée', $auditLog->details['message']);
 
         $this->assertDatabaseHas('audit_logs', [
             'event_type' => 'login_failed',
@@ -100,7 +100,7 @@ class AuditLoggerTest extends TestCase
         $this->assertEquals('account_locked', $auditLog->event_type);
         $this->assertEquals($this->user->id, $auditLog->user_id);
         $this->assertEquals($failedAttempts, $auditLog->details['failed_attempts']);
-        $this->assertEquals('Account locked due to excessive failed login attempts', $auditLog->details['message']);
+        $this->assertEquals('Compte verrouillé en raison de tentatives de connexion échouées excessives', $auditLog->details['message']);
 
         $this->assertDatabaseHas('audit_logs', [
             'event_type' => 'account_locked',
@@ -119,7 +119,7 @@ class AuditLoggerTest extends TestCase
         $this->assertEquals('account_unlocked', $auditLog->event_type);
         $this->assertEquals($this->user->id, $auditLog->user_id);
         $this->assertEquals($adminUser->id, $auditLog->details['unlocked_by_user_id']);
-        $this->assertEquals('Account unlocked by administrator', $auditLog->details['message']);
+        $this->assertEquals('Compte déverrouillé par l\'administrateur', $auditLog->details['message']);
 
         $this->assertDatabaseHas('audit_logs', [
             'event_type' => 'account_unlocked',

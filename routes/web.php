@@ -22,11 +22,18 @@ Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login.form');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/password/change', [App\Http\Controllers\PasswordController::class, 'showChangeForm'])
-    ->middleware('auth')->name('password.change');
 
+// Re-authentication routes
+Route::get('/reauth', [App\Http\Controllers\ReauthenticationController::class, 'showForm'])
+    ->middleware('auth')->name('reauth.form');
+Route::post('/reauth', [App\Http\Controllers\ReauthenticationController::class, 'authenticate'])
+    ->middleware(['auth', 'throttle:5,1'])->name('reauth.authenticate');
+
+// Password change routes (require re-authentication)
+Route::get('/password/change', [App\Http\Controllers\PasswordController::class, 'showChangeForm'])
+    ->middleware(['auth', 'reauth'])->name('password.change');
 Route::post('/password/change', [App\Http\Controllers\PasswordController::class, 'change'])
-    ->middleware('auth')->name('password.change.post');
+    ->middleware(['auth', 'reauth'])->name('password.change.post');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
@@ -42,8 +49,8 @@ Route::middleware(['auth'])->group(function () {
         
         // User management routes
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
-        Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
-        Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+        Route::get('/admin/users/create', [AdminController::class, 'createUser'])->middleware('reauth')->name('admin.users.create');
+        Route::post('/admin/users', [AdminController::class, 'storeUser'])->middleware('reauth')->name('admin.users.store');
         Route::get('/admin/users/{user}', [AdminController::class, 'userDetails'])->name('admin.users.details');
         Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
         Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');

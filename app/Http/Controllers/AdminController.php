@@ -9,6 +9,8 @@ use App\Models\SecurityConfig;
 use App\Services\SecurityConfigService;
 use App\Services\AuditLogger;
 use App\Services\PasswordHistoryService;
+use App\Services\SessionSecurityService;
+use App\Http\Controllers\ReauthenticationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -22,20 +24,36 @@ class AdminController extends Controller
     protected $securityConfigService;
     protected $auditLogger;
     protected $passwordHistoryService;
+    protected $pbkdf2Hasher;
+    protected $passwordPolicyService;
+    protected $sessionSecurityService;
 
     /**
-     * new controller instance
+     * Nouvelle instance du contrôleur
      */
     public function __construct(
         SecurityConfigService $securityConfigService, 
         AuditLogger $auditLogger,
-        PasswordHistoryService $passwordHistoryService
+        PasswordHistoryService $passwordHistoryService,
+        \App\Services\PBKDF2PasswordHasher $pbkdf2Hasher,
+        \App\Services\PasswordPolicyService $passwordPolicyService,
+        SessionSecurityService $sessionSecurityService
     ) {
         $this->middleware('auth');
         $this->middleware('role:Administrateur');
+        
+        // Appliquer le middleware de ré-authentification aux opérations sensibles
+        $this->middleware('reauth:10')->only([
+            'storeUser', 'updateUser', 'resetUserPassword', 'unlockUser',
+            'updateSecurityConfig', 'resetSecurityConfig', 'terminateUserSessions'
+        ]);
+        
         $this->securityConfigService = $securityConfigService;
         $this->auditLogger = $auditLogger;
         $this->passwordHistoryService = $passwordHistoryService;
+        $this->sessionSecurityService = $sessionSecurityService;
+        $this->pbkdf2Hasher = $pbkdf2Hasher;
+        $this->passwordPolicyService = $passwordPolicyService;
     }
 
     /**
@@ -245,18 +263,40 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::min(8)],
             'role_id' => 'required|exists:roles,id',
+            'must_change_password' => 'nullable|boolean',
         ]);
 
         try {
+            // Validate password against policy
+            $passwordValidation = $this->passwordPolicyService->validateComplexity($request->password);
+            if (!$passwordValidation['valid']) {
+                return redirect()->back()
+                    ->withErrors(['password' => $passwordValidation['errors']])
+                    ->withInput();
+            }
+
+            // Enregistrer la ré-authentification pour l'opération critique
+            $this->auditLogger->logSecurityEvent('reauth_critical_operation', Auth::id(), [
+                'operation' => 'user_creation',
+                'target_email' => $request->email,
+                'message' => 'Ré-authentifié pour la création d\'utilisateur'
+            ], $request);
+
+            // Hash password using PBKDF2
+            $hashedData = $this->pbkdf2Hasher->hash($request->password);
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => $hashedData['hash'],
+                'password_salt' => $hashedData['salt'],
                 'role_id' => $request->role_id,
+                'password_changed_at' => now(),
+                'must_change_password' => $request->boolean('must_change_password', false),
             ]);
 
             // Add password to history
-            $this->passwordHistoryService->addToHistory($user->id, ['hash' => $user->password]);
+            $this->passwordHistoryService->addToHistory($user->id, $hashedData);
 
             // Log user creation
             $this->auditLogger->logUserCreated($user->id, Auth::id(), $request);
@@ -300,6 +340,7 @@ class AdminController extends Controller
 
         try {
             $oldData = $user->toArray();
+            $roleChanged = $user->role_id != $request->role_id;
             
             $user->update([
                 'name' => $request->name,
@@ -309,6 +350,16 @@ class AdminController extends Controller
 
             // Log user update
             $this->auditLogger->logUserUpdated($user->id, Auth::id(), $oldData, $user->toArray(), $request);
+
+            // If the role changed and it's the current user, regenerate session
+            if ($roleChanged && Auth::id() === $user->id) {
+                $this->sessionSecurityService->regenerateSession($request, true);
+                $this->auditLogger->logSecurityEvent('role_changed_session_regenerated', $user->id, [
+                    'message' => 'Session régénérée après changement de rôle',
+                    'old_role_id' => $oldData['role_id'],
+                    'new_role_id' => $request->role_id
+                ], $request);
+            }
 
             return redirect()->route('admin.users')
                 ->with('success', "User {$user->name} updated successfully.");
@@ -363,19 +414,37 @@ class AdminController extends Controller
     {
         $request->validate([
             'password' => ['required', 'confirmed', Password::min(8)],
+            'force_change' => 'nullable|boolean',
         ]);
 
         try {
-            $oldPasswordHash = $user->password;
-            $newPasswordHash = Hash::make($request->password);
+            // Validate password against policy
+            $passwordValidation = $this->passwordPolicyService->validatePassword($request->password, $user);
+            if (!$passwordValidation['valid']) {
+                return redirect()->back()
+                    ->withErrors(['password' => $passwordValidation['errors']]);
+            }
+
+            // Enregistrer la ré-authentification pour l'opération critique
+            $this->auditLogger->logSecurityEvent('reauth_critical_operation', Auth::id(), [
+                'operation' => 'password_reset',
+                'target_user_id' => $user->id,
+                'target_user_email' => $user->email,
+                'message' => 'Ré-authentifié pour la réinitialisation de mot de passe'
+            ], $request);
+
+            // Hash password using PBKDF2
+            $hashedData = $this->pbkdf2Hasher->hash($request->password);
             
             $user->update([
-                'password' => $newPasswordHash,
+                'password' => $hashedData['hash'],
+                'password_salt' => $hashedData['salt'],
                 'password_changed_at' => now(),
+                'must_change_password' => $request->boolean('force_change', false),
             ]);
 
             // Add new password to history
-            $this->passwordHistoryService->addToHistory($user->id, ['hash' => $newPasswordHash]);
+            $this->passwordHistoryService->addToHistory($user->id, $hashedData);
 
             // Log password reset
             $this->auditLogger->logPasswordReset($user->id, Auth::id(), $request);

@@ -34,12 +34,14 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for arrays
+     * Les attributs qui doivent être cachés pour les tableaux et JSON
+     * Protège les informations sensibles d'authentification
      *
      * @var array
      */
     protected $hidden = [
         'password',
+        'password_hash',
         'password_salt',
         'remember_token',
     ];

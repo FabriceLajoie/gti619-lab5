@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\PBKDF2PasswordHasher;
 use App\Services\SecurityConfigService;
 use App\Services\AuditLogger;
+use App\Services\SessionSecurityService;
 use Carbon\Carbon;
 
 class AuthController extends Controller
@@ -15,19 +16,22 @@ class AuthController extends Controller
     protected $passwordHasher;
     protected $securityConfigService;
     protected $auditLogger;
+    protected $sessionSecurityService;
 
     public function __construct(
         PBKDF2PasswordHasher $passwordHasher,
         SecurityConfigService $securityConfigService,
-        AuditLogger $auditLogger
+        AuditLogger $auditLogger,
+        SessionSecurityService $sessionSecurityService
     ) {
         $this->passwordHasher = $passwordHasher;
         $this->securityConfigService = $securityConfigService;
         $this->auditLogger = $auditLogger;
+        $this->sessionSecurityService = $sessionSecurityService;
     }
 
     /**
-     * Show the login form
+     * Afficher le formulaire de connexion
      */
     public function showLogin()
     {
@@ -35,7 +39,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle login request with enhanced security controls
+     * Gérer la demande de connexion avec des contrôles de sécurité renforcés
      */
     public function login(Request $request)
     {
@@ -47,14 +51,14 @@ class AuthController extends Controller
         $email = $credentials['email'];
         $password = $credentials['password'];
 
-        // Find user by email
+        // Trouver l'utilisateur par email
         $user = User::where('email', $email)->first();
 
         if (!$user) {
-            // Log failed attempt for non-existent user
+            // Enregistrer la tentative échouée pour un utilisateur inexistant
             $this->auditLogger->logFailedAuthentication($email, $request);
             
-            // Apply progressive delay for non-existent users to prevent enumeration
+            // Appliquer un délai progressif pour les utilisateurs inexistants afin de prévenir l'énumération
             $this->applyProgressiveDelay(1);
             
             return back()->withErrors([
@@ -62,7 +66,7 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        // Check if account locked
+        // Vérifier si le compte est verrouillé
         if ($this->isAccountLocked($user)) {
             $this->auditLogger->logFailedAuthentication($email, $request);
             
@@ -71,20 +75,25 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        // Attempt authentication using PBKDF2 provider
+        // Tenter l'authentification en utilisant le fournisseur PBKDF2
         if (Auth::attempt($credentials)) {
-            // Reset failed attempts on login
+            // Réinitialiser les tentatives échouées lors de la connexion
             $user->failed_login_attempts = 0;
             $user->locked_until = null;
             $user->save();
 
-            // Log successful authentication
+            // Enregistrer l'authentification réussie
             $this->auditLogger->logSuccessfulAuthentication($user->id, $request);
 
-            $request->session()->regenerate();
+            // Régénérer la session pour prévenir la fixation de session
+            $this->sessionSecurityService->regenerateSession($request, false);
+            
+            // Initialiser l'empreinte de session
+            $this->sessionSecurityService->initializeSessionFingerprint($request);
+
             return redirect()->intended(route('dashboard'));
         } else {
-            // Handle failed authentication
+            // Gérer l'authentification échouée
             $this->handleFailedAuthentication($user, $request);
             
             return back()->withErrors([
@@ -94,7 +103,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Check if account locked
+     * Vérifier si le compte est verrouillé
      */
     protected function isAccountLocked(User $user): bool
     {
@@ -102,9 +111,9 @@ class AuthController extends Controller
             return false;
         }
 
-        // Check if lock period expired
+        // Vérifier si la période de verrouillage a expiré
         if (Carbon::now()->greaterThan($user->locked_until)) {
-            // Unlock account automatically
+            // Déverrouiller le compte automatiquement
             $user->locked_until = null;
             $user->failed_login_attempts = 0;
             $user->save();
@@ -115,45 +124,45 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle failed authentication attempt
+     * Gérer une tentative d'authentification échouée
      */
     protected function handleFailedAuthentication(User $user, Request $request): void
     {
         $securityConfig = $this->securityConfigService->getConfig();
         
-        // Inc failed attempts
+        // Incrémenter les tentatives échouées
         $user->failed_login_attempts = ($user->failed_login_attempts ?? 0) + 1;
         
-        // Log failed attempt
+        // Enregistrer la tentative échouée
         $this->auditLogger->logFailedAuthentication($user->email, $request);
 
-        // Check if account should be locked
+        // Vérifier si le compte doit être verrouillé
         if ($user->failed_login_attempts >= $securityConfig->max_login_attempts) {
-            $lockoutDuration = $securityConfig->lockout_duration; // in minutes
+            $lockoutDuration = $securityConfig->lockout_duration; // en minutes
             $user->locked_until = Carbon::now()->addMinutes($lockoutDuration);
             
-            // Log account lockout
+            // Enregistrer le verrouillage du compte
             $this->auditLogger->logAccountLockout($user->id, $user->failed_login_attempts, $request);
         }
 
         $user->save();
 
-        // Apply progressive delay based on failed attempts
+        // Appliquer un délai progressif basé sur les tentatives échouées
         $this->applyProgressiveDelay($user->failed_login_attempts);
     }
 
     /**
-     * apply progressive delay to prevent brute force attacks
+     * Appliquer un délai progressif pour prévenir les attaques par force brute
      */
     protected function applyProgressiveDelay(int $failedAttempts): void
     {
-        // 1s, 2s, 4s, 8s, 16s (max 16 seconds)
+        // 1s, 2s, 4s, 8s, 16s (maximum 16 secondes)
         $delay = min(pow(2, $failedAttempts - 1), 16);
         sleep($delay);
     }
 
     /**
-     * Show dashboard
+     * Afficher le tableau de bord
      */
     public function showDashboard()
     {
@@ -163,23 +172,24 @@ class AuthController extends Controller
 
 
     /**
-     * Handle logout
+     * Gérer la déconnexion
      */
     public function logout(Request $request)
     {
         $userId = Auth::id();
         
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        // Log logout event
+        // Enregistrer l'événement de déconnexion avant de détruire la session
         if ($userId) {
             $this->auditLogger->logSecurityEvent('user_logout', $userId, [
-                'message' => 'User logged out'
+                'message' => 'Utilisateur déconnecté'
             ], $request);
         }
+        
+        Auth::logout();
+
+        // Invalider complètement la session et régénérer le token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect('/');
     }

@@ -33,7 +33,7 @@
             @endif
 
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
@@ -245,26 +245,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                Informations de configuration
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <h6 class="text-muted">Statut actuel</h6>
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-success me-2">Actif</span>
-                                    <small class="text-muted">Dernière mise à jour : {{ $config->updated_at->format('j M Y H:i') }}</small>
-                                </div>
-                            </div>
-                            
 
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

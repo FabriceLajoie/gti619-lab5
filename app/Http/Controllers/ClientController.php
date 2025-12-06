@@ -8,7 +8,7 @@ use App\Models\Client;
 class ClientController extends Controller
 {
     /**
-     * Display a listing of the resource
+     * Afficher la liste des ressources
      *
      * @return \Illuminate\Http\Response
      */
@@ -19,7 +19,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource
+     * Afficher le formulaire de création d'une nouvelle ressource
      *
      * @return \Illuminate\Http\Response
      */
@@ -29,7 +29,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Store new resource in storage
+     * Enregistrer une nouvelle ressource en stockage
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -48,7 +48,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Display specified resource
+     * Afficher la ressource spécifiée
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -59,7 +59,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Show the form for editing resource
+     * Afficher le formulaire d'édition de la ressource
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -71,7 +71,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Update the specified resource in storage
+     * Mettre à jour la ressource spécifiée en stockage
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -91,7 +91,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Remove the resource from stockage
+     * Supprimer la ressource du stockage
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

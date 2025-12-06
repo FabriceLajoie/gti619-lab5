@@ -17,7 +17,7 @@ class RoleMiddleware
     }
 
     /**
-     * Handle incoming request
+     * Gérer une requête entrante
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
@@ -26,19 +26,19 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // Check if user is auth
+        // Vérifier si l'utilisateur est authentifié
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
         
-        // Load user's role if not already
+        // Charger le rôle de l'utilisateur s'il n'est pas déjà chargé
         if (!$user->relationLoaded('role')) {
             $user->load('role');
         }
 
-        // Check if user has role assigned
+        // Vérifier si l'utilisateur a un rôle assigné
         if (!$user->role) {
             $this->auditLogger->logSecurityEvent('unauthorized_access_no_role', $user->id, [
                 'route' => $request->route()->getName(),
@@ -51,7 +51,7 @@ class RoleMiddleware
 
         $userRole = $user->role->name;
 
-        // Check if user role is in the allowed roles
+        // Vérifier si le rôle de l'utilisateur est dans les rôles autorisés
         if (!in_array($userRole, $roles)) {
             $this->auditLogger->logSecurityEvent('unauthorized_access_insufficient_role', $user->id, [
                 'user_role' => $userRole,
@@ -60,12 +60,12 @@ class RoleMiddleware
                 'url' => $request->url()
             ], $request);
 
-            // Redirect based on user role to appropriate page
+            // Rediriger selon le rôle de l'utilisateur vers la page appropriée
             $redirectRoute = $this->getRedirectRouteForRole($userRole);
-            return redirect()->route($redirectRoute)->with('error', 'Access denied: Insufficient permissions.');
+            return redirect()->route($redirectRoute)->with('error', 'Accès refusé: Permissions insuffisantes.');
         }
 
-        // Log access
+        // Enregistrer l'accès
         $this->auditLogger->logSecurityEvent('authorized_access', $user->id, [
             'user_role' => $userRole,
             'route' => $request->route()->getName(),
@@ -76,7 +76,7 @@ class RoleMiddleware
     }
 
     /**
-     * Get appropriate redirect route based role
+     * Obtenir la route de redirection appropriée selon le rôle
      *
      * @param string $role
      * @return string

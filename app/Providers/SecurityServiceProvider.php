@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\PBKDF2PasswordHasher;
 use App\Services\PasswordHistoryService;
+use App\Services\SessionSecurityService;
 use Illuminate\Support\ServiceProvider;
 
 class SecurityServiceProvider extends ServiceProvider
@@ -26,6 +27,12 @@ class SecurityServiceProvider extends ServiceProvider
         $this->app->singleton(PasswordHistoryService::class, function ($app) {
             $hasher = $app->make(PBKDF2PasswordHasher::class);
             return new PasswordHistoryService($hasher);
+        });
+        
+        // Register SessionSecurityService as singleton
+        $this->app->singleton(SessionSecurityService::class, function ($app) {
+            $auditLogger = $app->make(\App\Services\AuditLogger::class);
+            return new SessionSecurityService($auditLogger);
         });
     }
 

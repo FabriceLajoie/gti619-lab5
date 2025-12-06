@@ -9,7 +9,7 @@ use App\Models\Permission;
 class PermissionService
 {
     /**
-     * Check if a user has a specific permission
+     * Vérifier si un utilisateur a une permission spécifique
      *
      * @param User $user
      * @param string $permission
@@ -25,7 +25,7 @@ class PermissionService
     }
 
     /**
-     * Check if a user has permission for resource and action
+     * Vérifier si un utilisateur a la permission pour une ressource et une action
      *
      * @param User $user
      * @param string $resource
@@ -42,7 +42,7 @@ class PermissionService
     }
 
     /**
-     * Check if a user has any of the roles
+     * Vérifier si un utilisateur a l'un des rôles spécifiés
      *
      * @param User $user
      * @param array $roles
@@ -58,7 +58,7 @@ class PermissionService
     }
 
     /**
-     * Get all permissions for a user
+     * Obtenir toutes les permissions d'un utilisateur
      *
      * @param User $user
      * @return \Illuminate\Database\Eloquent\Collection
@@ -73,7 +73,7 @@ class PermissionService
     }
 
     /**
-     * Get default permissions for each role based on requirements
+     * Obtenir les permissions par défaut pour chaque rôle selon les exigences
      *
      * @return array
      */
@@ -106,7 +106,7 @@ class PermissionService
     }
 
     /**
-     * Check if user can access a specific route based on role requirements
+     * Vérifier si l'utilisateur peut accéder à une route spécifique selon les exigences de rôle
      *
      * @param User $user
      * @param string $routeName
@@ -132,7 +132,7 @@ class PermissionService
     }
 
     /**
-     * Get route to permission mapping
+     * Obtenir la correspondance entre les routes et les permissions
      *
      * @return array
      */
