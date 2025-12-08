@@ -632,7 +632,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Get statistics for the audit log
+     * Get stats for the audit log
      *
      * @return \Illuminate\View\View
      */

@@ -57,7 +57,7 @@ class ReauthenticationController extends Controller
                 $user->pbkdf2_iterations ?? 100000
             );
         } else {
-            // Repli sur le Hash de Laravel pour les mots de passe hérités
+            // Repli sur le Hash de Laravel pour les mdp hérités
             $isValid = Hash::check($request->password, $user->password);
         }
 
@@ -74,7 +74,7 @@ class ReauthenticationController extends Controller
             ]);
         }
 
-        // Définir l'horodatage de ré-authentification
+        // Définir timing de ré-authentification
         Session::put('last_reauth_at', Carbon::now()->toISOString());
 
         // Enregistrer la ré-authentification réussie
@@ -111,7 +111,7 @@ class ReauthenticationController extends Controller
     }
 
     /**
-     * Force la ré-authentification en effaçant l'horodatage
+     * Force la ré-authentification en effaçant le timing
      *
      * @return void
      */

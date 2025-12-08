@@ -19,7 +19,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Afficher le formulaire de création d'une nouvelle ressource
+     * Afficher le formulaire de création 
      *
      * @return \Illuminate\Http\Response
      */
@@ -29,7 +29,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Enregistrer une nouvelle ressource en stockage
+     * Enregistrer une nouvelle ressource
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -48,7 +48,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Afficher la ressource spécifiée
+     * Afficher la ressource
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -59,7 +59,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Afficher le formulaire d'édition de la ressource
+     * Afficher le formulaire edit
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -71,7 +71,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Mettre à jour la ressource spécifiée en stockage
+     * Mettre à jour ressource spécifiée
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -91,7 +91,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Supprimer la ressource du stockage
+     * Supprimer ressource du stockage
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

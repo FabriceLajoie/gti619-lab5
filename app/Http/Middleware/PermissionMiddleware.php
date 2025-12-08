@@ -52,7 +52,7 @@ class PermissionMiddleware
             return redirect()->route('dashboard')->with('error', 'Access denied: No role assigned.');
         }
 
-        // Vérifier si l'utilisateur a l'une des permissions requises
+        // Vérifier si l'utilisateur a une des permissions requises
         $hasPermission = false;
         foreach ($permissions as $permission) {
             if ($this->permissionService->userHasPermission($user, $permission)) {
@@ -70,7 +70,7 @@ class PermissionMiddleware
                 'url' => $request->url()
             ]);
 
-            // Rediriger selon le rôle de l'utilisateur vers la page appropriée
+            // Rediriger selon le rôle de l'utilisateur vers page appropriée
             $redirectRoute = $this->getRedirectRouteForRole($user->role->name);
             return redirect()->route($redirectRoute)->with('error', 'Accès refusé: Permissions insuffisantes.');
         }
@@ -87,7 +87,7 @@ class PermissionMiddleware
     }
 
     /**
-     * Obtenir la route de redirection appropriée selon le rôle de l'utilisateur
+     * Obtenir la route de redirection appropriée selon le rôle utilisateur
      *
      * @param string $role
      * @return string

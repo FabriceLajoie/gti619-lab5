@@ -27,7 +27,6 @@ class SessionSecurityMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // Skip for guest users
         if (!Auth::check()) {
             return $next($request);
         }

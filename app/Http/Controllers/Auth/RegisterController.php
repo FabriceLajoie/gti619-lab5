@@ -15,14 +15,14 @@ class RegisterController extends Controller
     use RegistersUsers;
 
     /**
-     * Where to redirect users after registration.
+     * Where to redirect users after register
      *
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
-     * Create a new controller instance.
+     * Create a new controller instance
      *
      * @return void
      */
@@ -32,7 +32,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Get a validator for an incoming registration request.
+     * Get a validator for an incoming registration request
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
@@ -47,7 +47,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Create a new user instance after a valid registration
      *
      * @param  array  $data
      * @return \App\Models\User

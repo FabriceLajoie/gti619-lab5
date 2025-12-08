@@ -34,7 +34,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Les attributs qui doivent être cachés pour les tableaux et JSON
      * Protège les informations sensibles d'authentification
      *
      * @var array
@@ -47,7 +46,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast to native types
      *
      * @var array
      */
@@ -65,7 +63,7 @@ class User extends Authenticatable
     }
     
     /**
-     * Get the password history for the user
+     * Get the password history for user
      */
     public function passwordHistories()
     {
@@ -81,7 +79,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has a specific role
+     * Check if user has specific role
      *
      * @param string $roleName
      * @return bool
@@ -92,7 +90,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has any of the specified roles
+     * Check if user has any specified roles
      *
      * @param array $roles
      * @return bool
@@ -103,7 +101,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has a specific permission
+     * Check if user has permission
      *
      * @param string $permission
      * @return bool
@@ -114,7 +112,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user can access a specific resource with an action.
+     * Check if user can access a specific resource with an action
      *
      * @param string $resource
      * @param string $action
@@ -126,7 +124,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all permissions for this user.
+     * Get all permissions for this user
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -136,7 +134,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user account is currently locked.
+     * Check if the user account is currently locked
      *
      * @return bool
      */
@@ -146,7 +144,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the time remaining until the account is unlocked.
+     * Get the time remaining until the account unlocked
      *
      * @return string|null
      */

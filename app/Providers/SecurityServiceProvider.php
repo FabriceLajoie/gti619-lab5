@@ -16,20 +16,19 @@ class SecurityServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Register PBKDF2PasswordHasher as singleton
+        // singleton
         $this->app->singleton(PBKDF2PasswordHasher::class, function ($app) {
-            // Get iterations from config or use default
             $iterations = config('security.pbkdf2_iterations', 100000);
             return new PBKDF2PasswordHasher($iterations);
         });
         
-        // Register PasswordHistoryService as singleton
+        // singleton
         $this->app->singleton(PasswordHistoryService::class, function ($app) {
             $hasher = $app->make(PBKDF2PasswordHasher::class);
             return new PasswordHistoryService($hasher);
         });
         
-        // Register SessionSecurityService as singleton
+        // singleton
         $this->app->singleton(SessionSecurityService::class, function ($app) {
             $auditLogger = $app->make(\App\Services\AuditLogger::class);
             return new SessionSecurityService($auditLogger);

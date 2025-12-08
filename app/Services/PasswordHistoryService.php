@@ -34,7 +34,7 @@ class PasswordHistoryService
     }
     
     /**
-     * Add a password to user's history
+     * Add a password to user history
      * 
      * @param User $user The user
      * @param string $passwordHash Base64 encoded password hash
@@ -58,10 +58,7 @@ class PasswordHistoryService
             'iterations' => $iterations,
             'algorithm' => $algorithm
         ]);
-        
-        // Clean up old password history records
         $this->cleanupOldPasswords($user);
-        
         return $passwordHistory;
     }
     

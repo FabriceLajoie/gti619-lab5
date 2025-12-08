@@ -8,14 +8,12 @@ use App\Services\SessionSecurityService;
 class CleanupExpiredSessions extends Command
 {
     /**
-     * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'sessions:cleanup';
 
     /**
-     * The console command description.
      *
      * @var string
      */
@@ -24,7 +22,7 @@ class CleanupExpiredSessions extends Command
     protected $sessionSecurityService;
 
     /**
-     * Create a new command instance.
+     * Create a new command instance
      *
      * @return void
      */
@@ -35,7 +33,7 @@ class CleanupExpiredSessions extends Command
     }
 
     /**
-     * Execute the console command.
+     * Execute con command
      *
      * @return int
      */

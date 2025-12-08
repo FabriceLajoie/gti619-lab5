@@ -26,9 +26,6 @@ class SecureHeaders
         
         // Active la protection XSS dans les navigateurs
         $response->headers->set('X-XSS-Protection', '1; mode=block');
-        
-        // Force HTTPS et empêche les attaques de downgrade de protocole
-        // Note: HSTS n'est appliqué que si la connexion est déjà en HTTPS
         if ($request->secure()) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }

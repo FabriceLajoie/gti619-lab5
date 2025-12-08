@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class RequireReauthentication
 {
     /**
-     * Traite une requête entrante.
+     * Traite requête entrante
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

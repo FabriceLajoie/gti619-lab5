@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ForceHttps
 {
     /**
-     * Traite une requête entrante et force HTTPS.
+     * Traite une requête entrante et force HTTPS. (I messed up, doesn't work :((( )
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
@@ -16,8 +16,6 @@ class ForceHttps
      */
     public function handle(Request $request, Closure $next)
     {
-        // Ne forcer HTTPS qu'en production ou quand explicitement activé
-        // En développement local, on permet HTTP pour faciliter le développement
         if ($this->shouldEnforceHttps() && !$this->isSecure($request)) {
             return redirect()->secure($request->getRequestUri(), 301);
         }
@@ -26,7 +24,7 @@ class ForceHttps
     }
 
     /**
-     * Détermine si la requête est sécurisée.
+     * Détermine si requête sécurisée.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return bool
@@ -37,15 +35,12 @@ class ForceHttps
     }
 
     /**
-     * Détermine si HTTPS doit être forcé.
+     *  HTTPS forcé?
      *
      * @return bool
      */
     protected function shouldEnforceHttps(): bool
     {
-        // Forcer HTTPS uniquement en production
-        // En développement local, on n'impose pas HTTPS même si FORCE_HTTPS est true
-        // car Docker n'est pas configuré avec SSL
         return app()->environment('production');
     }
 }

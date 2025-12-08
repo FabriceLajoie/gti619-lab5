@@ -318,12 +318,12 @@ class PasswordPolicyService
             }
         }
         
-        // Vérifier les caractères répétés (plus de 3 d'affilée)
+        // Vérifier les caractères répétés 3 times repeating
         if (preg_match('/(.)\1{3,}/', $password)) {
             $errors[] = "Le mot de passe ne peut pas contenir plus de 3 caractères répétés d'affilée";
         }
         
-        // Vérifier les séquences simples
+        // Vérifier les séquences trop simple
         if (preg_match('/(?:0123|1234|2345|3456|4567|5678|6789|7890|abcd|bcde|cdef|defg|efgh|fghi|ghij|hijk|ijkl|jklm|klmn|lmno|mnop|nopq|opqr|pqrs|qrst|rstu|stuv|tuvw|uvwx|vwxy|wxyz)/i', $password)) {
             $errors[] = "Le mot de passe ne peut pas contenir de séquences simples (1234, abcd, etc.)";
         }

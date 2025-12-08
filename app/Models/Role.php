@@ -39,7 +39,7 @@ class Role extends Model
     }
 
     /**
-     * Vérifier si le rôle a la permission pour une ressource et une action
+     * Vérifier si le rôle a la permission
      *
      * @param string $resource
      * @param string $action

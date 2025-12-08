@@ -26,14 +26,14 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // Vérifier si l'utilisateur est authentifié
+        // Vérifier si l'utilisateur authentifié
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
         
-        // Charger le rôle de l'utilisateur s'il n'est pas déjà chargé
+        // Charger le rôle de l'utilisateur pas déjà chargé
         if (!$user->relationLoaded('role')) {
             $user->load('role');
         }

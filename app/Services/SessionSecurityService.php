@@ -43,7 +43,7 @@ class SessionSecurityService
             return $validation;
         }
 
-        // Valider l'empreinte de session (IP et User-Agent)
+        // Valider l'empreinte de session
         $this->validateSessionFingerprint($request, $validation, $options);
 
         // Vérifier l'âge de la session
@@ -94,7 +94,7 @@ class SessionSecurityService
             return;
         }
 
-        // Vérifier le changement d'adresse IP
+        // Vérifier changement d'adresse IP
         if ($storedIp !== $currentIp) {
             if ($options['strict_ip_validation'] ?? true) {
                 $validation['valid'] = false;
@@ -104,7 +104,7 @@ class SessionSecurityService
             }
         }
 
-        // Vérifier le changement de User-Agent
+        // Vérifier changement de User-Agent
         if ($storedUserAgent !== $currentUserAgent) {
             if ($options['strict_ua_validation'] ?? true) {
                 $validation['valid'] = false;

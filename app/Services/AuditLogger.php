@@ -31,7 +31,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer une tentative d'authentification réussie
+     * Enregistrer une tentative d'auth réussie
      *
      * @param int $userId
      * @param Request|null $request
@@ -45,7 +45,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer une tentative d'authentification échouée
+     * Enregistrer une tentative d'auth échouée
      *
      * @param string $email
      * @param Request|null $request
@@ -60,7 +60,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer un événement de verrouillage de compte
+     * Enregistrer un verrouillage de compte
      *
      * @param int $userId
      * @param int $failedAttempts
@@ -76,7 +76,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer un événement de déverrouillage de compte
+     * Enregistre déverrouillage de compte
      *
      * @param int $userId
      * @param int $unlockedByUserId
@@ -92,7 +92,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer un événement de changement de mot de passe
+     * Enregistrer changement de mot de passe
      *
      * @param int $userId
      * @param bool $forced
@@ -108,7 +108,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer une violation de politique de mot de passe
+     * Enregistrer une violation de politique de mdp
      *
      * @param int $userId
      * @param array $violations
@@ -124,7 +124,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer un événement de changement de rôle
+     * Enregistrer changement de rôle
      *
      * @param int $userId
      * @param string $oldRole
@@ -144,7 +144,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer un changement de configuration de sécurité
+     * Enregistrer config de sécurité
      *
      * @param int $userId
      * @param array $oldConfig
@@ -155,7 +155,6 @@ class AuditLogger
      */
     public function logSecurityConfigChange(int $userId, array $oldConfig, array $newConfig, ?Request $request = null, ?string $message = null): AuditLog
     {
-        // Calculer les changements réels
         $changes = [];
         foreach ($newConfig as $key => $newValue) {
             $oldValue = $oldConfig[$key] ?? null;
@@ -174,7 +173,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer une tentative d'accès non autorisé
+     * Enregistrer try accès non autorisé
      *
      * @param string $resource
      * @param string $action
@@ -192,7 +191,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer un événement de création d'utilisateur
+     * Enregistrer de création d'utilisateur
      *
      * @param int $newUserId
      * @param int $createdByUserId
@@ -210,7 +209,7 @@ class AuditLogger
     }
 
     /**
-     * Enregistrer les événements de sécurité liés aux sessions
+     * Enregistrer affaires de session
      *
      * @param string $sessionEvent
      * @param int|null $userId

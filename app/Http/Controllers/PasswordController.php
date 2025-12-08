@@ -34,7 +34,7 @@ class PasswordController extends Controller
     }
 
     /**
-     * Affiche le formulaire de changement de mot de passe
+     * Affiche le formulaire de changement mdp
      *
      * @return \Illuminate\View\View
      */
@@ -44,7 +44,7 @@ class PasswordController extends Controller
     }
 
     /**
-     * Traite la demande de changement de mot de passe avec sécurité renforcée
+     * Traite la demande de changement de mdp
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -59,7 +59,7 @@ class PasswordController extends Controller
             'password' => 'required|string|confirmed',
         ]);
 
-        // Vérifier le mot de passe actuel avec le hacheur PBKDF2
+        // Vérifier le mdp actuel avec le hacheur PBKDF2
         $isCurrentPasswordValid = false;
         if ($user->salt && $user->password_hash) {
             // Utiliser la vérification PBKDF2
@@ -75,9 +75,9 @@ class PasswordController extends Controller
         }
 
         if (!$isCurrentPasswordValid) {
-            // Enregistrer la tentative de changement de mot de passe échouée
+            // Enregistrer la tentative de changement de mdp échouée
             $this->auditLogger->logSecurityEvent('password_change_failed', $user->id, [
-                'message' => 'Échec du changement de mot de passe - mot de passe actuel incorrect',
+                'message' => 'Échec du changement de mdp - mot de passe actuel incorrect',
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent()
             ], $request);
@@ -85,11 +85,11 @@ class PasswordController extends Controller
             return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
         }
 
-        // Valider le nouveau mot de passe selon la politique
+        // Valider le nouveau mdp selon la politique
         try {
             $this->passwordPolicyService->validatePassword($request->password, $user->id);
         } catch (\Exception $e) {
-            // Enregistrer la violation de la politique de mot de passe
+            // Enregistrer la violation de la politique de mdp
             $this->auditLogger->logSecurityEvent('password_policy_violation', $user->id, [
                 'message' => 'Violation de la politique de mot de passe lors du changement',
                 'violation' => $e->getMessage(),
@@ -100,10 +100,10 @@ class PasswordController extends Controller
             return back()->withErrors(['password' => $e->getMessage()]);
         }
 
-        // Hacher le nouveau mot de passe avec PBKDF2
+        // Hacher le nouveau mdp avec PBKDF2
         $hashedData = $this->passwordHasher->hash($request->password);
 
-        // Mettre à jour le mot de passe de l'utilisateur
+        // Mettre à jour le mdp de l'utilisateur
         $user->update([
             'password_hash' => $hashedData['hash'],
             'salt' => $hashedData['salt'],
@@ -115,14 +115,14 @@ class PasswordController extends Controller
         // Ajouter à l'historique des mots de passe
         $this->passwordPolicyService->addToHistory($user->id, $hashedData);
 
-        // Enregistrer le changement de mot de passe réussi
+        // Enregistrer le changement de mdp réussi
         $this->auditLogger->logSecurityEvent('password_changed', $user->id, [
             'message' => 'Mot de passe changé avec succès',
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent()
         ], $request);
 
-        // Régénérer la session après le changement de mot de passe pour la sécurité
+        // Régénérer la session après le changement de mdp pour la sécurité
         $this->sessionSecurityService->regenerateSession($request, true);
 
         // Forcer la ré-authentification pour les futures opérations sensibles
